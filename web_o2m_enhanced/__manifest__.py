@@ -1,8 +1,8 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.3',
+    'version': '19.0.1.17.4',
     'category': 'Technical',
-    'author': 'Muhammet Demir',
+    'author': 'Greenery',
     'support': 'greenery_solutions@outlook.com',
     'summary': 'The missing toolbox for one2many lists: Excel-like filters, bulk edit, XLSX export, import with update-by-ID, line duplication, persistent column widths — enabled per table from the UI, no XML needed',
     'description': """
