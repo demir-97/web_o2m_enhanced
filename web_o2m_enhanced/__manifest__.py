@@ -1,6 +1,6 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.16.1',
+    'version': '19.0.1.17.0',
     'category': 'Technical',
     'author': 'Muhammet Demir',
     'support': 'dmr97.muhammet@gmail.com',
@@ -36,7 +36,9 @@ Excel export & import:
 - Import from XLSX or CSV: rows with an ID update the matching line, rows
   without an ID are added as new lines. Many2one cells are resolved by name,
   selection cells by label or value, many2many cells as comma-separated names
-  (replacing the line's current tags).
+  (replacing the line's current tags). When several records share the same
+  name, an "[ID]" suffix in the cell (e.g. "John Smith [42]") picks one
+  explicitly — the row error lists the candidates with their IDs.
 - Imported changes are staged on the form like manual edits: review them and
   save the record to apply, or discard to cancel. A summary notification
   reports updated/created counts and any row errors.

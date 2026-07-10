@@ -68,6 +68,7 @@
             <li><b>One-click XLSX export</b> of the visible rows &mdash; filter first and export just the matching lines. The file starts with an <code>ID</code> column, so it doubles as an update template.</li>
             <li><b>Import from XLSX or CSV</b>: rows <b>with an ID</b> update the matching line, rows <b>without an ID</b> are added as new lines. Export &rarr; edit in Excel &rarr; re-import: bulk line updates without leaving the form.</li>
             <li><b>Smart cell matching</b> &mdash; many2one cells are resolved by name, many2many cells as comma-separated tag names (replacing the line's tags), selection cells by label or value, booleans accept TRUE/FALSE/1/0, dates use ISO or your locale format.</li>
+            <li><b>Duplicate names handled</b> &mdash; if several records share the same name (two "John Smith" contacts), the row error lists the candidates with their IDs and an <code>[ID]</code> suffix in the cell (<code>John Smith [42]</code>) picks one explicitly.</li>
             <li><b>Paste straight from Excel</b> &mdash; copy cells in your spreadsheet and paste them into the list, no file needed. Headers are auto-detected, and a live preview shows how many lines will be updated or created before you confirm.</li>
             <li><b>Nothing is written behind your back</b> &mdash; imported changes are staged on the form exactly like manual edits: review them, then save the record to apply or discard to cancel. A summary notification reports updated/created counts and any row errors.</li>
         </ul>

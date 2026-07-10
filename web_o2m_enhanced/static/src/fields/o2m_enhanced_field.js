@@ -120,6 +120,20 @@ function recordCellValue(record, column, field) {
 const TRUTHY_CELLS = ["true", "1", "yes"];
 const FALSY_CELLS = ["false", "0", "no", ""];
 
+/** Error for a relational cell whose name matches several records. */
+function ambiguousNameError(name, field, candidates) {
+    const list = candidates.map(([id, label]) => `${label} [${id}]`).join(", ");
+    return _t(
+        '"%(name)s" matches several records in %(relation)s: %(list)s. Append the ID, e.g. "%(example)s", to pick one.',
+        {
+            name,
+            relation: field.relation,
+            list,
+            example: `${name} [${candidates[0][0]}]`,
+        }
+    );
+}
+
 /**
  * Convert an imported cell into a value for `record.update()`.
  * @returns {{value: any} | {error: string}}
@@ -185,8 +199,8 @@ function cellToFieldValue(cell, field, m2oNameMap) {
             if (match === undefined) {
                 return { error: _t("'%s' not found in %s", name, field.relation) };
             }
-            if (match === null) {
-                return { error: _t("'%s' is ambiguous in %s", name, field.relation) };
+            if (match.ambiguous) {
+                return { error: ambiguousNameError(name, field, match.ambiguous) };
             }
             return { value: match };
         }
@@ -213,8 +227,8 @@ function m2mCellToTags(cell, field, nameMap) {
         if (match === undefined) {
             return { error: _t("'%s' not found in %s", name, field.relation) };
         }
-        if (match === null) {
-            return { error: _t("'%s' is ambiguous in %s", name, field.relation) };
+        if (match.ambiguous) {
+            return { error: ambiguousNameError(name, field, match.ambiguous) };
         }
         if (!tags.some((tag) => tag.id === match.id)) {
             tags.push(match);
@@ -1648,7 +1662,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
             }
             // Resolve the many2one name once, like the spreadsheet import does.
             // A record picked in the dialog is used as-is, without a lookup.
-            const m2oMap = new Map();
+            let m2oMap = new Map();
             if (field.type === "many2one" && rawValue && typeof rawValue === "object") {
                 const label = String(rawValue.display_name ?? "");
                 m2oMap.set(label.trim().toLowerCase(), {
@@ -1656,30 +1670,8 @@ export class EnhancedOne2ManyField extends X2ManyField {
                     display_name: rawValue.display_name,
                 });
                 rawValue = label;
-            } else if (field.type === "many2one") {
-                const name = String(rawValue ?? "").trim();
-                if (name) {
-                    let matches = await this.o2mOrm.call(field.relation, "name_search", [], {
-                        name,
-                        operator: "=",
-                        limit: 2,
-                    });
-                    if (!matches.length) {
-                        matches = await this.o2mOrm.call(field.relation, "name_search", [], {
-                            name,
-                            operator: "ilike",
-                            limit: 2,
-                        });
-                    }
-                    if (matches.length === 1) {
-                        m2oMap.set(name.toLowerCase(), {
-                            id: matches[0][0],
-                            display_name: matches[0][1],
-                        });
-                    } else if (matches.length > 1) {
-                        m2oMap.set(name.toLowerCase(), null);
-                    }
-                }
+            } else if (field.type === "many2one" && String(rawValue ?? "").trim()) {
+                m2oMap = await this._o2mResolveRelNames(field.relation, [String(rawValue).trim()]);
             }
             const result = cellToFieldValue(rawValue, field, m2oMap);
             if (result.error) {
@@ -1705,6 +1697,56 @@ export class EnhancedOne2ManyField extends X2ManyField {
                 sticky: true,
             });
         }
+    }
+
+    /**
+     * Resolve display names to records of `relation`, once per distinct name.
+     * An "[id]" suffix ("Acme [42]") picks a record explicitly — the way out
+     * when several records share the same name.
+     * Values: {id, display_name} or {ambiguous: [[id, name], ...]}; a missing
+     * key means "not found".
+     */
+    async _o2mResolveRelNames(relation, names) {
+        const nameMap = new Map();
+        for (const rawName of names) {
+            const name = String(rawName).trim();
+            const key = name.toLowerCase();
+            if (!name || nameMap.has(key)) {
+                continue;
+            }
+            const idMatch = name.match(/\[(\d+)\]$/);
+            if (idMatch) {
+                const resId = parseInt(idMatch[1], 10);
+                const found = await this.o2mOrm.searchRead(
+                    relation,
+                    [["id", "=", resId]],
+                    ["display_name"],
+                    { limit: 1 }
+                );
+                if (found.length) {
+                    nameMap.set(key, { id: resId, display_name: found[0].display_name });
+                }
+                continue;
+            }
+            let matches = await this.o2mOrm.call(relation, "name_search", [], {
+                name,
+                operator: "=",
+                limit: 6,
+            });
+            if (!matches.length) {
+                matches = await this.o2mOrm.call(relation, "name_search", [], {
+                    name,
+                    operator: "ilike",
+                    limit: 6,
+                });
+            }
+            if (matches.length === 1) {
+                nameMap.set(key, { id: matches[0][0], display_name: matches[0][1] });
+            } else if (matches.length > 1) {
+                nameMap.set(key, { ambiguous: matches.slice(0, 5) });
+            }
+        }
+        return nameMap;
     }
 
     /** True when a record's many2many links already equal `tags`. */
@@ -1995,7 +2037,6 @@ export class EnhancedOne2ManyField extends X2ManyField {
             ) {
                 continue;
             }
-            const nameMap = new Map();
             const names = new Set();
             for (const row of rows) {
                 const cell = row[c];
@@ -2014,29 +2055,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
                     names.add(String(cell).trim());
                 }
             }
-            for (const name of names) {
-                let matches = await this.o2mOrm.call(field.relation, "name_search", [], {
-                    name,
-                    operator: "=",
-                    limit: 2,
-                });
-                if (!matches.length) {
-                    matches = await this.o2mOrm.call(field.relation, "name_search", [], {
-                        name,
-                        operator: "ilike",
-                        limit: 2,
-                    });
-                }
-                if (matches.length === 1) {
-                    nameMap.set(name.toLowerCase(), {
-                        id: matches[0][0],
-                        display_name: matches[0][1],
-                    });
-                } else if (matches.length > 1) {
-                    nameMap.set(name.toLowerCase(), null); // ambiguous
-                }
-            }
-            m2oMaps.set(column.name, nameMap);
+            m2oMaps.set(column.name, await this._o2mResolveRelNames(field.relation, names));
         }
 
         // Apply row by row: with ID -> update that line, without -> new line.
