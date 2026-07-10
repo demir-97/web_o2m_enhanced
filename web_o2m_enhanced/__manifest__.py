@@ -1,9 +1,9 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.2',
+    'version': '19.0.1.17.3',
     'category': 'Technical',
     'author': 'Muhammet Demir',
-    'support': 'dmr97.muhammet@gmail.com',
+    'support': 'greenery_solutions@outlook.com',
     'summary': 'The missing toolbox for one2many lists: Excel-like filters, bulk edit, XLSX export, import with update-by-ID, line duplication, persistent column widths — enabled per table from the UI, no XML needed',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.

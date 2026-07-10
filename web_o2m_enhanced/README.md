@@ -179,6 +179,6 @@ Planned capabilities, in no particular order:
 
 ## Support
 
-Questions, bug reports or feature requests: **dmr97.muhammet@gmail.com**
+Questions, bug reports or feature requests: **greenery_solutions@outlook.com**
 
 License: see `__manifest__.py`.
