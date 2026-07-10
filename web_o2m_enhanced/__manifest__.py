@@ -1,6 +1,6 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.0',
+    'version': '19.0.1.17.1',
     'category': 'Technical',
     'author': 'Muhammet Demir',
     'support': 'dmr97.muhammet@gmail.com',
