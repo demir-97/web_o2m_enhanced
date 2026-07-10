@@ -518,14 +518,19 @@ export class O2mBulkEditDialog extends Component {
         this.state = useState({
             fieldName: this.props.fields[0]?.name || "",
             text: "",
-            bool: false,
+            boolChoice: "true",
             tags: [],
             tagSearch: "",
             tagOptions: [],
+            m2o: null,
+            m2oSearch: "",
+            m2oOptions: [],
         });
         this.title = _t("Edit selected lines");
         this.subtitle = _t("Set a value on the %s selected line(s).", this.props.count);
-        onWillStart(() => this._loadTagOptions(""));
+        onWillStart(() =>
+            Promise.all([this._loadTagOptions(""), this._loadM2oOptions("")])
+        );
     }
 
     get selectedField() {
@@ -563,6 +568,27 @@ export class O2mBulkEditDialog extends Component {
         this.state.tags = this.state.tags.filter((t) => t.id !== id);
     }
 
+    async _loadM2oOptions(name) {
+        const field = this.selectedField;
+        if (!field || field.type !== "many2one") {
+            return;
+        }
+        const matches = await this.orm.call(field.relation, "name_search", [], {
+            name,
+            limit: 30,
+        });
+        this.state.m2oOptions = matches.map(([id, display_name]) => ({ id, display_name }));
+    }
+
+    onM2oInput(ev) {
+        const value = ev.target.value;
+        const match = this.state.m2oOptions.find((o) => o.display_name === value);
+        this.state.m2o = match ? { ...match } : null;
+        if (!match) {
+            this._loadM2oOptions(value);
+        }
+    }
+
     get inputType() {
         switch (this.selectedField?.type) {
             case "integer":
@@ -581,11 +607,15 @@ export class O2mBulkEditDialog extends Component {
     onFieldChange(ev) {
         this.state.fieldName = ev.target.value;
         this.state.text = "";
-        this.state.bool = false;
+        this.state.boolChoice = "true";
         this.state.tags = [];
         this.state.tagSearch = "";
         this.state.tagOptions = [];
+        this.state.m2o = null;
+        this.state.m2oSearch = "";
+        this.state.m2oOptions = [];
         this._loadTagOptions("");
+        this._loadM2oOptions("");
     }
 
     onConfirm() {
@@ -595,9 +625,13 @@ export class O2mBulkEditDialog extends Component {
         }
         let value;
         if (field.type === "boolean") {
-            value = this.state.bool;
+            value = this.state.boolChoice === "true";
         } else if (field.type === "many2many") {
             value = [...this.state.tags];
+        } else if (field.type === "many2one") {
+            // A picked record wins; otherwise the typed text is resolved by
+            // name (and an empty text clears the field).
+            value = this.state.m2o ? { ...this.state.m2o } : this.state.m2oSearch;
         } else {
             value = this.state.text;
         }
@@ -1613,8 +1647,16 @@ export class EnhancedOne2ManyField extends X2ManyField {
                 return;
             }
             // Resolve the many2one name once, like the spreadsheet import does.
+            // A record picked in the dialog is used as-is, without a lookup.
             const m2oMap = new Map();
-            if (field.type === "many2one") {
+            if (field.type === "many2one" && rawValue && typeof rawValue === "object") {
+                const label = String(rawValue.display_name ?? "");
+                m2oMap.set(label.trim().toLowerCase(), {
+                    id: rawValue.id,
+                    display_name: rawValue.display_name,
+                });
+                rawValue = label;
+            } else if (field.type === "many2one") {
                 const name = String(rawValue ?? "").trim();
                 if (name) {
                     let matches = await this.o2mOrm.call(field.relation, "name_search", [], {
