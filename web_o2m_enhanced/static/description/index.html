@@ -1,0 +1,193 @@
+<section style="max-width: 900px; margin: 0 auto; padding: 32px 16px; font-family: Arial, Helvetica, sans-serif; color: #333;">
+    <div style="text-align: center; padding: 40px 24px; background: linear-gradient(135deg, #875A7B 0%, #5E3C58 100%); border-radius: 12px; color: #fff;">
+        <h1 style="margin: 0 0 12px; font-size: 32px; color: #fff;">O2M Enhanced &mdash; The Missing Toolbox for One2many Lists</h1>
+        <p style="margin: 0; font-size: 18px; opacity: 0.9;">
+            One drop-in widget that upgrades Odoo's embedded one2many lists with the
+            capabilities users expect from a spreadsheet: Excel-like filters, bulk edit,
+            XLSX export &amp; import, paste from Excel, line duplication, hierarchy view.
+            Enable it on any table from the Settings UI &mdash; no XML needed.
+        </p>
+    </div>
+
+    <!-- GIF: hero overview (filters + toolbar on the demo table), save as hero.gif and uncomment
+    <img src="hero.gif" style="width: 100%; border-radius: 8px; margin-top: 24px; border: 1px solid #eee;" alt="The enhanced one2many table in action"/>
+    -->
+
+    <div style="margin-top: 40px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Why this module?</h2>
+        <p style="font-size: 15px; line-height: 1.6;">
+            Odoo's embedded one2many lists (order lines, move lines, BoM components, ...)
+            are bare tables: no search, no export, no quick line operations. Once a document
+            has dozens or hundreds of lines, working with them means paging and scanning by
+            eye. <b>O2M Enhanced</b> fixes that with a single widget &mdash; enabled from
+            the UI in two clicks, or with <code>widget="one2many_enhanced"</code> in the
+            view XML. It is a pure client-side widget: no model changes, no stored data,
+            nothing written behind your back.
+        </p>
+    </div>
+
+    <div style="margin-top: 32px; padding: 24px; background: #f6f2f5; border-left: 4px solid #875A7B; border-radius: 0 12px 12px 0;">
+        <h2 style="color: #875A7B; font-size: 24px; margin-top: 0;">No-code setup &mdash; enable it on any table from the UI</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px; margin-bottom: 0;">
+            <li><b>Settings &rsaquo; Technical &rsaquo; User Interface &rsaquo; Enhanced Tables</b>: pick a model and one of its one2many tables, tick the tools you want &mdash; every form view showing that table gets the enhanced widget instantly. No view XML, no developer needed.</li>
+            <li><b>All options in the form</b> &mdash; open filters by default, remember column widths, disable any individual tool, pin the hierarchy field, exclude columns from filtering.</li>
+            <li><b>Custom widgets are respected</b> &mdash; if a table already uses a specialized widget (like the sale order lines' sections &amp; notes), the setup warns you and leaves it untouched, unless you explicitly enable <i>Override Custom Widget</i>.</li>
+            <li><b>Dedicated access right</b> &mdash; only users with the <i>Enhanced Tables / Manager</i> right (administrators out of the box) can manage the setups.</li>
+        </ul>
+        <!-- GIF: Enhanced Tables setup form -> table gets the tools, save as settings.gif and uncomment
+        <img src="settings.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="No-code setup from the Settings UI"/>
+        -->
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Available now: column filtering suite</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Per-column filters</b>, adapted to each column's type:
+                <ul style="line-height: 1.7;">
+                    <li>Text columns: instant "contains" search</li>
+                    <li>Number columns: plain search that matches both the displayed <code>25,000.00</code> and the raw <code>25000</code>, ranges (<code>0 - 10</code>, <code>5 -</code>) and operators (<code>&gt;5</code>, <code>&lt;=100</code>, <code>!=0</code>)</li>
+                    <li>Selection columns: multi-select checklist; boolean columns: dropdown</li>
+                    <li>Date / datetime columns: from&ndash;to range with the native date picker</li>
+                    <li>Many2one / x2many columns: multi-select checklist of the values in use</li>
+                </ul>
+            </li>
+            <li><b>Cross-page filtering</b> &mdash; all pages are loaded so filters search the whole recordset, and the pager pages through the filtered result.</li>
+            <li><b>Match highlighting</b> &mdash; the matching text is highlighted live in text and number columns as you type.</li>
+            <li><b>Live counter &amp; clear-all</b> &mdash; a "shown / total" badge and a one-click button to reset every filter.</li>
+            <li><b>Filtered totals</b> &mdash; footer aggregates (sum, average, min, max) are recomputed on the visible, filtered rows.</li>
+            <li><b>Edit-safe</b> &mdash; the row you are editing or just added never disappears behind an active filter.</li>
+        </ul>
+        <!-- GIF: typing in column filters with highlighting + counter, save as filters.gif and uncomment
+        <img src="filters.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Excel-like column filters"/>
+        -->
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Excel export &amp; import &mdash; the round-trip workflow</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>One-click XLSX export</b> of the visible rows &mdash; filter first and export just the matching lines. The file starts with an <code>ID</code> column, so it doubles as an update template.</li>
+            <li><b>Import from XLSX or CSV</b>: rows <b>with an ID</b> update the matching line, rows <b>without an ID</b> are added as new lines. Export &rarr; edit in Excel &rarr; re-import: bulk line updates without leaving the form.</li>
+            <li><b>Smart cell matching</b> &mdash; many2one cells are resolved by name, many2many cells as comma-separated tag names (replacing the line's tags), selection cells by label or value, booleans accept TRUE/FALSE/1/0, dates use ISO or your locale format.</li>
+            <li><b>Paste straight from Excel</b> &mdash; copy cells in your spreadsheet and paste them into the list, no file needed. Headers are auto-detected, and a live preview shows how many lines will be updated or created before you confirm.</li>
+            <li><b>Nothing is written behind your back</b> &mdash; imported changes are staged on the form exactly like manual edits: review them, then save the record to apply or discard to cancel. A summary notification reports updated/created counts and any row errors.</li>
+        </ul>
+        <!-- GIF: export -> edit in Excel -> import (update-by-ID), save as export_import.gif and uncomment
+        <img src="export_import.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Excel round-trip: export, edit, import"/>
+        -->
+        <!-- GIF: paste from Excel dialog with live preview, save as paste.gif and uncomment
+        <img src="paste.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Paste rows copied from Excel"/>
+        -->
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Line duplication</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Duplicate the selection</b> &mdash; select one or more lines and copy them all from the toolbar.</li>
+            <li><b>Confirmation with a copy count</b> &mdash; a small dialog guards against misclicks and lets you create up to 50 copies of each selected line at once.</li>
+            <li><b>Complete copies</b> &mdash; tags (many2many values) are copied too; computed fields are recomputed. Copies are staged and applied when you save the record.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Bulk edit &mdash; unique to this module</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Row selection in one2many lists</b> &mdash; core Odoo offers neither selection checkboxes nor multi-edit inside embedded lists.</li>
+            <li><b>Filter-aware select all</b> &mdash; the killer workflow: <i>filter &rarr; select all &rarr; set a value on every matching line at once</i>.</li>
+            <li><b>Type-aware value dialog</b> &mdash; number inputs, native date pickers, selection dropdowns, boolean checkbox, many2one resolved by name. Leave empty to clear the field.</li>
+            <li><b>Selection totals</b> &mdash; while rows are selected, the footer aggregates show the selection's sums.</li>
+            <li><b>Staged, reviewable</b> &mdash; like every write feature in this module, changes land on the form unsaved: review and save, or discard.</li>
+        </ul>
+        <!-- GIF: filter -> select all -> bulk edit dialog, save as bulk_edit.gif and uncomment
+        <img src="bulk_edit.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Bulk edit the filtered selection"/>
+        -->
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Hierarchy view</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Indented tree in the list</b> &mdash; when lines have a parent/child relationship (a self-referencing many2one), one toolbar toggle turns the flat list into a collapsible tree.</li>
+            <li><b>Zero configuration</b> &mdash; the hierarchy field is auto-detected, or pinned with the <code>hierarchy_field</code> option.</li>
+            <li><b>Filter-aware</b> &mdash; filter first, then view the matching rows as a tree.</li>
+        </ul>
+        <!-- GIF: toggling hierarchy view and collapsing nodes, save as hierarchy.gif and uncomment
+        <img src="hierarchy.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Hierarchy view"/>
+        -->
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Persistent column widths</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Resize once, keep forever</b> &mdash; column widths adjusted by dragging the header separators survive page refreshes, per user and per list.</li>
+            <li><b>One-click reset</b> &mdash; a reset button (shown only when custom widths exist) restores the automatic layout.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Safe by design</h2>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
+            <li><b>Read-only is always respected</b> &mdash; columns read-only on the model or in the view (including record-dependent readonly rules) are never modified by bulk edit, import, paste or duplication.</li>
+            <li><b>Permissions too</b> &mdash; no tool adds lines when the list forbids creation, or stages edits when the field is read-only.</li>
+            <li><b>Everything is staged</b> &mdash; every write feature lands its changes on the form unsaved, exactly like manual edits: review and save, or discard. Odoo's access rights and business rules apply on save, as always.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 32px; padding: 24px; background: #f0f9f9; border-left: 4px solid #00A09D; border-radius: 0 12px 12px 0;">
+        <h2 style="color: #00A09D; font-size: 24px; margin-top: 0;">On the roadmap</h2>
+        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 8px;">
+            This module is actively developed. Upcoming capabilities &mdash; included in
+            your purchase as free updates for this version:
+        </p>
+        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px; margin-bottom: 0;">
+            <li>Saved filter presets per user</li>
+            <li>Native support for the sale order lines' sections &amp; notes widget, and more</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Usage</h2>
+        <p style="font-size: 15px; line-height: 1.6;">
+            <b>From the UI (recommended):</b> open <i>Settings &rsaquo; Technical &rsaquo;
+            User Interface &rsaquo; Enhanced Tables</i>, create a setup, pick the model and
+            its one2many table, choose the options and save &mdash; done.
+        </p>
+        <p style="font-size: 15px; line-height: 1.6;"><b>Or in the view XML:</b> add the widget to any one2many field in a form view:</p>
+        <pre style="background: #2b2b2b; color: #eee; padding: 16px; border-radius: 8px; font-size: 14px; overflow-x: auto;">&lt;field name="order_line" widget="one2many_enhanced"&gt;
+    &lt;list&gt;
+        &lt;field name="product_id"/&gt;
+        &lt;field name="name"/&gt;
+        &lt;field name="product_uom_qty"/&gt;
+        &lt;field name="price_subtotal" sum="Total"/&gt;
+    &lt;/list&gt;
+&lt;/field&gt;</pre>
+        <p style="font-size: 15px; line-height: 1.6;">
+            Then click the <b>filter icon</b> above the table to open the filter row.
+            Press <b>Escape</b> in any filter input to close it and restore the list.
+        </p>
+        <p style="font-size: 15px; line-height: 1.6;">
+            <b>Every tool is configurable per view</b> through the standard <code>options</code> dict:
+            <code>default_open</code>, <code>disable_filter</code>, <code>disable_export</code>,
+            <code>disable_import</code>, <code>disable_bulk_edit</code>, <code>disable_duplicate</code>,
+            <code>disable_selection</code>, <code>disable_hierarchy</code>, <code>hierarchy_field</code>,
+            <code>no_filter_columns</code>, <code>save_column_widths</code>.
+            Options written in the XML keep precedence over the UI setup.
+        </p>
+    </div>
+
+    <div style="margin-top: 32px;">
+        <h2 style="color: #875A7B; font-size: 24px;">Known limitations</h2>
+        <ul style="font-size: 15px; line-height: 1.8; padding-left: 20px;">
+            <li>Grouped embedded lists are not supported &mdash; the filter button is hidden there.</li>
+            <li>Filtering and export handle at most the first 1000 records; a warning is shown when the recordset is larger.</li>
+            <li>Import does not fill one2many or read-only columns; they are reported as ignored.</li>
+            <li>Tables displayed with a specialized widget (e.g. sale order lines) are left untouched by default; the setup form warns you and offers an explicit override switch.</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center; padding: 24px; background: #f6f2f5; border-radius: 12px;">
+        <h2 style="color: #875A7B; font-size: 22px; margin-top: 0;">Support</h2>
+        <p style="font-size: 15px; margin-bottom: 0;">
+            Questions, bug reports or feature requests:
+            <a href="mailto:dmr97.muhammet@gmail.com" style="color: #875A7B;"><b>dmr97.muhammet@gmail.com</b></a>
+        </p>
+    </div>
+</section>

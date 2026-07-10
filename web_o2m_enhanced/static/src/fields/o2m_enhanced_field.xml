@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="web_o2m_enhanced.EnhancedOne2ManyField" t-inherit="web.X2ManyField" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_cp_pager')]" position="attributes">
+            <attribute name="t-if">props.record.data[props.name].count > props.record.data[props.name].limit or showO2mFilterPager</attribute>
+        </xpath>
+    </t>
+
+    <t t-name="web_o2m_enhanced.EnhancedListRenderer" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//table[@t-ref='table']" position="before">
+            <div class="o_o2m_filter_toggle d-flex justify-content-end align-items-center" t-if="props.o2mFilter and !props.list.isGrouped">
+                <button
+                    t-if="o2mSelectedRecords.length and !props.readonly and !o2mOptions.disable_bulk_edit"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_bulk_edit_btn btn btn-sm"
+                    aria-label="Edit selected lines"
+                    title="Edit selected lines"
+                    t-on-click="onO2mBulkEdit"
+                >
+                    <i class="fa fa-pencil me-1"/><t t-esc="o2mSelectedRecords.length"/>
+                </button>
+                <button
+                    t-if="o2mSelectedRecords.length and o2mCanDuplicate and !o2mOptions.disable_duplicate"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_duplicate_btn btn btn-sm"
+                    aria-label="Duplicate selected lines"
+                    title="Duplicate selected lines"
+                    t-on-click="onO2mDuplicateSelected"
+                >
+                    <i class="fa fa-clone"/>
+                </button>
+                <span
+                    t-if="o2mState.active and !o2mState.closing and o2mState.truncated"
+                    class="o_o2m_filter_truncated"
+                    t-att-title="o2mTruncatedTitle"
+                >
+                    <i class="fa fa-exclamation-triangle"/>
+                </span>
+                <span
+                    t-if="o2mState.active and !o2mState.closing and hasActiveFilter"
+                    class="o_o2m_filter_count"
+                    t-esc="o2mCounterText"
+                />
+                <button
+                    t-if="o2mState.active and !o2mState.closing and hasActiveFilter"
+                    type="button"
+                    class="o_o2m_filter_clear_btn btn btn-sm"
+                    aria-label="Clear all filters"
+                    title="Clear all filters"
+                    t-on-click="onClearAllFilters"
+                >
+                    <i class="fa fa-times"/>
+                </button>
+                <button
+                    t-if="props.o2mFilter.hasStoredWidths()"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_reset_widths_btn btn btn-sm"
+                    aria-label="Reset column widths"
+                    title="Reset column widths"
+                    t-on-click="onO2mResetWidths"
+                >
+                    <i class="fa fa-arrows-h"/>
+                </button>
+                <button
+                    t-if="o2mHierarchyFieldName"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_tree_btn btn btn-sm"
+                    t-att-class="o2mTreeActive ? 'o_active' : ''"
+                    t-att-aria-pressed="o2mTreeActive ? 'true' : 'false'"
+                    aria-label="Hierarchy view"
+                    title="Hierarchy view"
+                    t-on-click="onO2mTreeToggleMode"
+                >
+                    <i class="fa fa-sitemap"/>
+                </button>
+                <button
+                    t-if="!o2mOptions.disable_export"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_export_btn btn btn-sm"
+                    aria-label="Export to Excel"
+                    title="Export to Excel"
+                    t-on-click="onO2mExport"
+                >
+                    <i class="fa fa-download"/>
+                </button>
+                <button
+                    t-if="!props.readonly and !o2mOptions.disable_import"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_import_btn btn btn-sm"
+                    aria-label="Import from Excel or CSV"
+                    title="Import from Excel or CSV"
+                    t-on-click="onO2mImportClick"
+                >
+                    <i class="fa fa-upload"/>
+                </button>
+                <input
+                    type="file"
+                    class="d-none"
+                    accept=".xlsx,.csv"
+                    t-ref="o2mImportInput"
+                    t-on-change="onO2mImportFile"
+                />
+                <button
+                    t-if="!props.readonly and !o2mOptions.disable_import"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn o_o2m_paste_btn btn btn-sm"
+                    aria-label="Paste from Excel"
+                    title="Paste rows copied from Excel"
+                    t-on-click="onO2mPaste"
+                >
+                    <i class="fa fa-clipboard"/>
+                </button>
+                <button
+                    t-if="!o2mOptions.disable_filter"
+                    type="button"
+                    class="o_o2m_filter_toggle_btn btn btn-sm"
+                    t-att-class="o2mState.active and !o2mState.closing ? 'o_active' : ''"
+                    t-att-aria-pressed="o2mState.active ? 'true' : 'false'"
+                    aria-label="Toggle column filters"
+                    title="Filter"
+                    t-on-click="onToggleFilter"
+                >
+                    <i class="fa fa-filter"/>
+                </button>
+            </div>
+        </xpath>
+        <xpath expr="//thead/tr" position="after">
+            <tr
+                t-if="props.o2mFilter and o2mState.active and !props.list.isGrouped"
+                class="o_o2m_filter_row"
+                t-att-class="o2mState.closing ? 'o_closing' : ''"
+            >
+                <td t-if="hasSelectors"/>
+                <t t-foreach="columns" t-as="column" t-key="column.id">
+                    <td class="o_o2m_filter_cell">
+                        <div class="o_o2m_filter_cell_wrap" t-if="column.type === 'field' and column.widget !== 'handle' and !isFilterExcluded(column)">
+                            <t t-set="ftype" t-value="getColumnFilterType(column)"/>
+                            <select
+                                t-if="ftype === 'boolean'"
+                                class="o_o2m_filter_col_input o_o2m_filter_select"
+                                t-on-change="(ev) => this.onColFilterInput(column.name, ev)"
+                                t-on-keydown="onFilterKeydown"
+                            >
+                                <option value="" t-esc="column.label"/>
+                                <t t-foreach="getFilterOptions(column)" t-as="opt" t-key="opt[0]">
+                                    <option
+                                        t-att-value="opt[0]"
+                                        t-esc="opt[1]"
+                                        t-att-selected="(o2mState.cols[column.name] or '') === opt[0]"
+                                    />
+                                </t>
+                            </select>
+                            <Dropdown t-elif="ftype === 'select'" position="'bottom-start'" menuClass="'o_o2m_filter_relsel_menu'">
+                                <button
+                                    type="button"
+                                    class="o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center"
+                                    t-att-class="(o2mState.cols[column.name] or []).length ? '' : 'o_empty'"
+                                >
+                                    <span class="text-truncate flex-grow-1 text-start" t-esc="getSelFilterLabel(column)"/>
+                                    <i class="fa fa-caret-down flex-shrink-0"/>
+                                </button>
+                                <t t-set-slot="content">
+                                    <t t-foreach="getFilterOptions(column)" t-as="opt" t-key="opt[0]">
+                                        <DropdownItem closingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt[0])">
+                                            <CheckBox
+                                                value="isRelSelected(column.name, opt[0])"
+                                                onChange="() => this.toggleRelFilter(column.name, opt[0])"
+                                            >
+                                                <span class="text-truncate" t-esc="opt[1]"/>
+                                            </CheckBox>
+                                        </DropdownItem>
+                                    </t>
+                                </t>
+                            </Dropdown>
+                            <div t-elif="ftype === 'date'" class="o_o2m_filter_date_wrap d-flex align-items-center">
+                                <input
+                                    type="text"
+                                    size="1"
+                                    class="o_o2m_filter_date_start"
+                                    t-att-data-col="column.name"
+                                    placeholder="From"
+                                />
+                                <i class="fa fa-long-arrow-right o_o2m_filter_date_arrow" role="presentation"/>
+                                <input
+                                    type="text"
+                                    size="1"
+                                    class="o_o2m_filter_date_end"
+                                    t-att-data-col="column.name"
+                                    placeholder="To"
+                                />
+                                <button
+                                    t-if="hasDateFilter(column)"
+                                    type="button"
+                                    class="o_o2m_filter_date_clear btn"
+                                    aria-label="Clear date filter"
+                                    t-on-click.stop="() => this.onDateFilterClear(column)"
+                                >
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                            <Dropdown t-elif="ftype === 'relsel'" position="'bottom-start'" menuClass="'o_o2m_filter_relsel_menu'">
+                                <button
+                                    type="button"
+                                    class="o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center"
+                                    t-att-class="(o2mState.cols[column.name] or []).length ? '' : 'o_empty'"
+                                >
+                                    <span class="text-truncate flex-grow-1 text-start" t-esc="getRelFilterLabel(column)"/>
+                                    <i class="fa fa-caret-down flex-shrink-0"/>
+                                </button>
+                                <t t-set-slot="content">
+                                    <t t-foreach="getRelFilterOptions(column)" t-as="opt" t-key="opt.id">
+                                        <DropdownItem closingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt.id)">
+                                            <CheckBox
+                                                value="isRelSelected(column.name, opt.id)"
+                                                onChange="() => this.toggleRelFilter(column.name, opt.id)"
+                                            >
+                                                <span class="text-truncate" t-esc="opt.label"/>
+                                            </CheckBox>
+                                        </DropdownItem>
+                                    </t>
+                                    <div t-if="!getRelFilterOptions(column).length" class="text-muted fst-italic px-3 py-2">
+                                        No records
+                                    </div>
+                                </t>
+                            </Dropdown>
+                            <input
+                                t-elif="ftype === 'number'"
+                                type="text"
+                                size="1"
+                                class="o_o2m_filter_col_input text-end"
+                                t-att-placeholder="column.label"
+                                title="Examples: 0 - 10, 5 -, - 10, &gt;5, &lt;=100"
+                                t-att-value="o2mState.cols[column.name] or ''"
+                                t-on-input="(ev) => this.onColFilterInput(column.name, ev)"
+                                t-on-keydown="onFilterKeydown"
+                            />
+                            <input
+                                t-else=""
+                                type="text"
+                                size="1"
+                                class="o_o2m_filter_col_input"
+                                t-att-placeholder="column.label"
+                                t-att-value="o2mState.cols[column.name] or ''"
+                                t-on-input="(ev) => this.onColFilterInput(column.name, ev)"
+                                t-on-keydown="onFilterKeydown"
+                            />
+                        </div>
+                    </td>
+                </t>
+                <td t-if="hasOpenFormViewColumn"/>
+                <td t-if="hasActionsColumn"/>
+            </tr>
+        </xpath>
+    </t>
+
+    <t t-name="web_o2m_enhanced.EnhancedListRenderer.RecordRow" t-inherit="web.ListRenderer.RecordRow" t-inherit-mode="primary">
+        <!-- In tree mode, the first cell's content (formatter text or edit
+             widget — a copy of the core cell body) sits in a flex row next to
+             the indent/caret prefix, so editing stays on the same line. -->
+        <xpath expr="//td[hasclass('o_data_cell')]/t[@t-if='!isInvisible']" position="replace">
+            <t t-if="!isInvisible">
+                <div t-if="o2mTreeActive and column_index === 0" class="o_o2m_tree_cell_flex">
+                    <span
+                        class="o_o2m_tree_prefix"
+                        t-att-class="o2mTreeHasChildren(record) ? 'o_o2m_tree_clickable' : ''"
+                        t-att-style="'padding-left: ' + (o2mTreeDepth(record) * 1.25) + 'rem'"
+                        t-on-click="(ev) => this.onO2mTreePrefixClick(record, ev)"
+                    >
+                        <i
+                            t-if="o2mTreeHasChildren(record)"
+                            t-att-class="'fa o_o2m_tree_caret fa-caret-' + (o2mTreeIsCollapsed(record) ? 'right' : 'down')"
+                            role="button"
+                            aria-label="Toggle children"
+                        />
+                        <span t-else="" class="o_o2m_tree_gap"/>
+                    </span>
+                    <div class="o_o2m_tree_cell_content">
+                        <t t-if="canUseFormatter(column, record)" t-out="getFormattedValue(column, record)"/>
+                        <Field t-else="" name="column.name" record="record" type="column.widget" class="getFieldClass(column)" fieldInfo="column" t-props="getFieldProps(record, column)"/>
+                    </div>
+                </div>
+                <t t-else="">
+                    <t t-if="canUseFormatter(column, record)" t-out="getFormattedValue(column, record)"/>
+                    <Field t-else="" name="column.name" record="record" type="column.widget" class="getFieldClass(column)" fieldInfo="column" t-props="getFieldProps(record, column)"/>
+                </t>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="web_o2m_enhanced.O2mPasteDialog">
+        <Dialog size="'lg'" title="title">
+            <div t-on-paste="onPaste">
+                <div
+                    t-if="!parsedRows.length"
+                    class="o_o2m_paste_zone d-flex flex-column align-items-center justify-content-center text-center p-4"
+                    tabindex="0"
+                    t-ref="pasteArea"
+                >
+                    <i class="fa fa-clipboard fa-2x mb-2" role="presentation"/>
+                    <span>Copy cells in Excel, then press <b>Ctrl+V</b> here</span>
+                    <span class="form-text">Include the header row to update existing lines by ID.</span>
+                </div>
+                <t t-else="">
+                    <div class="o_o2m_paste_preview table-responsive border rounded">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th t-foreach="previewHeaders" t-as="header" t-key="header_index" t-esc="header"/>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="previewRows" t-as="row" t-key="row_index">
+                                    <td t-foreach="row" t-as="cell" t-key="cell_index" t-esc="cell"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-text" t-if="previewMoreCount">
+                        + <t t-esc="previewMoreCount"/> more row(s)
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between mt-2">
+                        <div class="form-check">
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="o2m_paste_headers"
+                                t-att-checked="hasHeaders"
+                                t-on-change="onHeadersToggle"
+                            />
+                            <label class="form-check-label" for="o2m_paste_headers">
+                                First row contains column headers
+                            </label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-link" t-on-click="clearPaste">
+                            Paste something else
+                        </button>
+                    </div>
+                    <div class="form-text" t-esc="previewText"/>
+                </t>
+            </div>
+            <t t-set-slot="footer">
+                <button
+                    class="btn btn-primary"
+                    t-att-disabled="!dataRows.length or undefined"
+                    t-on-click="onConfirm"
+                >Import</button>
+                <button class="btn btn-secondary" t-on-click="() => this.props.close()">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="web_o2m_enhanced.O2mBulkEditDialog">
+        <Dialog size="'md'" title="title">
+            <p class="text-muted" t-esc="subtitle"/>
+            <div class="mb-3">
+                <label class="form-label" for="o2m_bulk_edit_field">Field</label>
+                <select id="o2m_bulk_edit_field" class="form-select" t-on-change="onFieldChange">
+                    <t t-foreach="props.fields" t-as="f" t-key="f.name">
+                        <option
+                            t-att-value="f.name"
+                            t-esc="f.label"
+                            t-att-selected="f.name === state.fieldName"
+                        />
+                    </t>
+                </select>
+            </div>
+            <div class="mb-2">
+                <label class="form-label" for="o2m_bulk_edit_value">Value</label>
+                <select
+                    t-if="selectedField and selectedField.type === 'selection'"
+                    id="o2m_bulk_edit_value"
+                    class="form-select"
+                    t-model="state.text"
+                >
+                    <option value=""/>
+                    <t t-foreach="selectedField.selection" t-as="opt" t-key="opt[0]">
+                        <option t-att-value="opt[0]" t-esc="opt[1]"/>
+                    </t>
+                </select>
+                <div t-elif="selectedField and selectedField.type === 'boolean'" class="form-check">
+                    <input
+                        type="checkbox"
+                        class="form-check-input"
+                        id="o2m_bulk_edit_value"
+                        t-model="state.bool"
+                    />
+                    <label class="form-check-label" for="o2m_bulk_edit_value">Yes</label>
+                </div>
+                <div t-elif="selectedField and selectedField.type === 'many2many'">
+                    <div t-if="state.tags.length" class="d-flex flex-wrap gap-1 mb-2">
+                        <span
+                            t-foreach="state.tags"
+                            t-as="tag"
+                            t-key="tag.id"
+                            class="badge rounded-pill text-bg-secondary d-inline-flex align-items-center"
+                        >
+                            <t t-esc="tag.display_name"/>
+                            <i
+                                class="fa fa-times ms-1"
+                                role="button"
+                                aria-label="Remove tag"
+                                t-on-click="() => this.removeTag(tag.id)"
+                            />
+                        </span>
+                    </div>
+                    <input
+                        id="o2m_bulk_edit_value"
+                        type="text"
+                        class="form-control"
+                        list="o2m_bulk_edit_tag_options"
+                        placeholder="Type to search, pick to add..."
+                        t-model="state.tagSearch"
+                        t-on-input="onTagInput"
+                    />
+                    <datalist id="o2m_bulk_edit_tag_options">
+                        <option
+                            t-foreach="state.tagOptions"
+                            t-as="opt"
+                            t-key="opt.id"
+                            t-att-value="opt.display_name"
+                        />
+                    </datalist>
+                    <div class="form-text">
+                        The selected tags replace the current values on the selected lines; empty clears them.
+                    </div>
+                </div>
+                <input
+                    t-else=""
+                    id="o2m_bulk_edit_value"
+                    t-att-type="inputType"
+                    class="form-control"
+                    t-model="state.text"
+                    t-on-keydown="onKeydown"
+                />
+                <div
+                    t-if="!selectedField or (selectedField.type !== 'boolean' and selectedField.type !== 'many2many')"
+                    class="form-text"
+                >
+                    Leave empty to clear the field on the selected lines.
+                </div>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onConfirm">Apply</button>
+                <button class="btn btn-secondary" t-on-click="() => this.props.close()">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="web_o2m_enhanced.O2mDuplicateDialog">
+        <Dialog size="'sm'" title="title">
+            <div class="o_o2m_duplicate_body">
+                <p class="text-muted" t-esc="subtitle"/>
+                <label class="form-label" for="o2m_duplicate_count">Number of copies per line</label>
+                <input
+                    id="o2m_duplicate_count"
+                    type="number"
+                    class="form-control"
+                    min="1"
+                    t-att-max="maxCopies"
+                    t-model.number="state.count"
+                    t-on-keydown="onKeydown"
+                />
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="onConfirm">Duplicate</button>
+                <button class="btn btn-secondary" t-on-click="() => this.props.close()">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="web_o2m_enhanced.EnhancedListRenderer.Rows" t-inherit="web.ListRenderer.Rows" t-inherit-mode="primary">
+        <xpath expr="//t[@t-foreach='list.records']" position="after">
+            <tr t-if="hasActiveFilter and !this.filteredRecords.length" class="o_o2m_filter_no_results">
+                <td t-att-colspan="nbCols" class="text-muted fst-italic p-2">
+                    No matching records
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//t[@t-foreach='list.records']" position="attributes">
+            <attribute name="t-foreach">this.filteredRecords</attribute>
+        </xpath>
+    </t>
+
+</templates>

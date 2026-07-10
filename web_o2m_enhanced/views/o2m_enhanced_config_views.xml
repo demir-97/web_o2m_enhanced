@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="o2m_enhanced_config_view_list" model="ir.ui.view">
+        <field name="name">o2m.enhanced.config.list</field>
+        <field name="model">o2m.enhanced.config</field>
+        <field name="arch" type="xml">
+            <list string="Enhanced Tables">
+                <field name="model_id"/>
+                <field name="field_id"/>
+                <field name="default_open" optional="hide"/>
+                <field name="disable_filter" optional="show"/>
+                <field name="disable_export" optional="show"/>
+                <field name="disable_import" optional="show"/>
+                <field name="disable_bulk_edit" optional="show"/>
+                <field name="disable_duplicate" optional="hide"/>
+                <field name="disable_selection" optional="hide"/>
+                <field name="disable_hierarchy" optional="hide"/>
+                <field name="save_column_widths" optional="hide"/>
+                <field name="force_widget" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="o2m_enhanced_config_view_form" model="ir.ui.view">
+        <field name="name">o2m.enhanced.config.form</field>
+        <field name="model">o2m.enhanced.config</field>
+        <field name="arch" type="xml">
+            <form string="Enhanced Table">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="alert alert-warning" role="alert" invisible="not custom_widget_warning">
+                        <field name="custom_widget_warning" nolabel="1" readonly="1"/>
+                    </div>
+                    <group>
+                        <group string="Table">
+                            <field name="active" invisible="1"/>
+                            <field name="line_model" invisible="1"/>
+                            <field name="model_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="field_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="force_widget" invisible="not custom_widget_warning and not force_widget"/>
+                        </group>
+                        <group string="Behaviour">
+                            <field name="default_open"/>
+                            <field name="save_column_widths"/>
+                        </group>
+                        <group string="Disabled Tools">
+                            <field name="disable_filter"/>
+                            <field name="disable_export"/>
+                            <field name="disable_import"/>
+                            <field name="disable_selection"/>
+                            <field name="disable_bulk_edit"/>
+                            <field name="disable_duplicate"/>
+                            <field name="disable_hierarchy"/>
+                        </group>
+                        <group string="Fine-tuning">
+                            <field name="hierarchy_field_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="no_filter_column_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Applies to every form view displaying this table.
+                        Options written in the view XML keep precedence over this setup.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="o2m_enhanced_config_action" model="ir.actions.act_window">
+        <field name="name">Enhanced Tables</field>
+        <field name="res_model">o2m.enhanced.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Enable the enhanced table on any one2many list — no XML needed
+            </p><p>
+                Pick a model and one of its one2many fields: every form view
+                displaying that table gets filters, Excel export/import, bulk
+                edit and the other tools, with the options you choose here.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="o2m_enhanced_config_menu"
+              name="Enhanced Tables"
+              parent="base.next_id_2"
+              action="o2m_enhanced_config_action"
+              groups="web_o2m_enhanced.group_o2m_enhanced_manager"
+              sequence="60"/>
+
+</odoo>

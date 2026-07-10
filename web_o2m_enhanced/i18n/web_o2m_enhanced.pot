@@ -1,0 +1,753 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* web_o2m_enhanced
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20260630\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-10 12:35+0000\n"
+"PO-Revision-Date: 2026-07-10 12:35+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid ""
+"%(changed)s of %(count)s selected line(s) updated. The changes are staged on"
+" the form: review them and save the record."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid ""
+"%(rows)s new line(s); no header row, so cells map to the columns in order: "
+"%(columns)s."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "%(rows)s row(s): %(updates)s update(s) by ID, %(creates)s new line(s)."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "%(updated)s line(s) updated, %(created)s line(s) created."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "%s line(s) skipped: the field is read-only there."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid ""
+"%s new line(s) created. The changes are staged on the form: review them and "
+"save the record."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "'%s' is ambiguous in %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "'%s' not found in %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "... and %s more error(s)."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__active
+msgid "Active"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid ""
+"Applies to every form view displaying this table.\n"
+"                        Options written in the view XML keep precedence over this setup."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Apply"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Archived"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Behaviour"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Bulk edit failed"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:res.groups,comment:web_o2m_enhanced.group_o2m_enhanced_manager
+msgid ""
+"Can enable the enhanced widget on one2many tables and tune its options from "
+"the Enhanced Tables setup menu."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Cancel"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Clear all filters"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Clear date filter"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__save_column_widths
+msgid ""
+"Column widths resized by dragging are restored per user after a refresh."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__no_filter_column_ids
+msgid "Columns Without Filter"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Copy cells in Excel, then press"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Create copies of the %s selected line(s)."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Ctrl+V"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__custom_widget_warning
+msgid "Custom Widget Warning"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_bulk_edit
+msgid "Disable Bulk Edit"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_filter
+msgid "Disable Column Filters"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_export
+msgid "Disable Excel Export"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_hierarchy
+msgid "Disable Hierarchy View"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_import
+msgid "Disable Import & Paste"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_duplicate
+msgid "Disable Line Duplication"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__disable_selection
+msgid "Disable Row Selection"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Disabled Tools"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_ir_ui_view__display_name
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Duplicate"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Duplicate lines"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Duplicate selected lines"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Duplication failed"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Edit selected lines"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.actions.act_window,help:web_o2m_enhanced.o2m_enhanced_config_action
+msgid "Enable the enhanced table on any one2many list — no XML needed"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Enhanced Table"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model,name:web_o2m_enhanced.model_o2m_enhanced_config
+msgid "Enhanced Table Setup"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.actions.act_window,name:web_o2m_enhanced.o2m_enhanced_config_action
+#: model:ir.ui.menu,name:web_o2m_enhanced.o2m_enhanced_config_menu
+#: model:res.groups.privilege,name:web_o2m_enhanced.res_groups_privilege_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_list
+msgid "Enhanced Tables"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Examples: 0 - 10, 5 -, - 10, >5, <=100"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Export to Excel"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Field"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__field_name
+msgid "Field Name"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Filter"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Fine-tuning"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "First row contains column headers"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__line_model
+msgid "For relationship fields, the technical name of the target model"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "From"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__disable_import
+msgid "Hides both the file import and the paste-from-Excel tools."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__disable_selection
+msgid ""
+"Hides the row checkboxes; bulk edit and duplication need them, so they are "
+"disabled as well."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__hierarchy_field_id
+msgid "Hierarchy Field"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Hierarchy view"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_ir_ui_view__id
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__id
+msgid "ID"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Ignored columns: %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Import"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Import failed"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Import finished"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Import from Excel or CSV"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Include the header row to update existing lines by ID."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Leave empty to clear the field on the selected lines."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__line_model
+msgid "Line Model"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:res.groups,name:web_o2m_enhanced.group_o2m_enhanced_manager
+msgid "Manager"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__model_id
+msgid "Model"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__model_name
+msgid "Model Name"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__model_id
+msgid ""
+"Model whose form views contain the one2many table (e.g. Sales Order for its "
+"order lines)."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-python
+#: code:addons/web_o2m_enhanced/models/o2m_enhanced_config.py:0
+msgid "New Table Setup"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "No"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "No column headers match the list. Use an exported file as template."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "No data rows found in %s."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "No editable columns in this list."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "No matching records"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "No records"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Number of copies per line"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Only the first %s records were exported."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__default_open
+msgid "Open Filters by Default"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__force_widget
+msgid "Override Custom Widget"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__hierarchy_field_id
+msgid ""
+"Parent-line field used by the hierarchy view. Leave empty to auto-detect it."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Paste from Excel"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Paste rows copied from Excel"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Paste something else"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model_terms:ir.actions.act_window,help:web_o2m_enhanced.o2m_enhanced_config_action
+msgid ""
+"Pick a model and one of its one2many fields: every form view\n"
+"                displaying that table gets filters, Excel export/import, bulk\n"
+"                edit and the other tools, with the options you choose here."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Relational table (enhanced)"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__save_column_widths
+msgid "Remember Column Widths"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Remove tag"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Reset column widths"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Row %(row)s, %(column)s: %(error)s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Row %(row)s, %(column)s: the field is read-only."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Row %(row)s: no line with ID %(id)s."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Row %s: adding new lines is not allowed here."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Row %s: the list is read-only, existing lines cannot be updated."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Set a value on the %s selected line(s)."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__default_open
+msgid "Show the filter row as soon as the form is displayed."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__force_widget
+msgid ""
+"Some tables are displayed with a specialized widget (e.g. the sale order "
+"lines and their sections & notes). Enable this to replace it with the "
+"enhanced table anyway; the specialized widget's own features will not be "
+"available."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,field_description:web_o2m_enhanced.field_o2m_enhanced_config__field_id
+#: model_terms:ir.ui.view,arch_db:web_o2m_enhanced.o2m_enhanced_config_view_form
+msgid "Table"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "The changes are staged on the form: review them and save the record."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-python
+#: code:addons/web_o2m_enhanced/models/o2m_enhanced_config.py:0
+msgid "The field must be a one2many field of the selected model."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__field_id
+msgid "The one2many field displayed as an embedded table in the form."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid ""
+"The selected tags replace the current values on the selected lines; empty "
+"clears them."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.constraint,message:web_o2m_enhanced.constraint_o2m_enhanced_config_field_uniq
+msgid "There is already a setup for this one2many field."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model.fields,help:web_o2m_enhanced.field_o2m_enhanced_config__no_filter_column_ids
+msgid "These columns get no input in the filter row."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-python
+#: code:addons/web_o2m_enhanced/models/o2m_enhanced_config.py:0
+msgid ""
+"This table is displayed with the specialized widget \"%s\", so this setup "
+"will not apply there. Enable \"Override Custom Widget\" to replace it "
+"anyway."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-python
+#: code:addons/web_o2m_enhanced/models/o2m_enhanced_config.py:0
+msgid ""
+"This table is normally displayed with the specialized widget \"%s\". It will"
+" be replaced by the enhanced table: the specialized widget's own features "
+"(e.g. sections and notes) will not be available."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "To"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Toggle children"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Toggle column filters"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "Too many records: only the first %s are loaded and filtered."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Type to search, pick to add..."
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Value"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#: model:ir.model,name:web_o2m_enhanced.model_ir_ui_view
+msgid "View"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "Yes"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "here"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "invalid boolean: %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "invalid choice: %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "invalid date: %s (expected e.g. 2026-12-31)"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.js:0
+msgid "invalid number: %s"
+msgstr ""
+
+#. module: web_o2m_enhanced
+#. odoo-javascript
+#: code:addons/web_o2m_enhanced/static/src/fields/o2m_enhanced_field.xml:0
+msgid "more row(s)"
+msgstr ""

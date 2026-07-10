@@ -1,0 +1,337 @@
+// Toggle button (top right of the table)
+.o_o2m_filter_toggle {
+    margin-bottom: 0.25rem;
+    gap: 0.625rem;
+
+    // Uniform control height so every tool lines up, whatever its content
+    > .btn {
+        height: 1.75rem;
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .o_o2m_filter_truncated {
+        color: var(--bs-warning, #f0ad4e);
+        font-size: 0.8125rem;
+        line-height: 1;
+        cursor: help;
+    }
+
+    .o_o2m_filter_count {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1;
+        color: var(--bs-primary, #714b67);
+        background-color: rgba(var(--bs-primary-rgb, 113, 75, 103), 0.1);
+        border-radius: 1rem;
+        white-space: nowrap;
+    }
+
+    .o_o2m_filter_clear_btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        line-height: 1;
+        color: var(--bs-secondary-color, #6c757d);
+        transition: color 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            color: var(--bs-danger, #dc3545);
+            background-color: rgba(var(--bs-danger-rgb, 220, 53, 69), 0.1);
+        }
+    }
+
+    .o_o2m_filter_toggle_btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        line-height: 1;
+        color: var(--bs-secondary-color, #6c757d);
+        transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+
+        &:hover {
+            color: var(--bs-emphasis-color, #212529);
+            background-color: var(--bs-secondary-bg, #e9ecef);
+        }
+
+        &.o_active {
+            color: var(--bs-primary, #714b67);
+            background-color: rgba(var(--bs-primary-rgb, 113, 75, 103), 0.1);
+            border-color: rgba(var(--bs-primary-rgb, 113, 75, 103), 0.25);
+        }
+    }
+}
+
+// Per-column filter row (inside thead, but rendered with <td> so the magic
+// column-width logic ignores it entirely)
+.o_o2m_filter_row {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+
+    > td {
+        padding: 0;
+        border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    }
+
+    .o_o2m_filter_cell_wrap {
+        overflow: hidden;
+        padding: 0.3rem 0.25rem;
+        animation: o_o2m_filter_slide_down 0.2s ease-out;
+    }
+
+    &.o_closing .o_o2m_filter_cell_wrap {
+        animation: o_o2m_filter_slide_up 0.18s ease-in forwards;
+    }
+
+    .o_o2m_filter_col_input {
+        width: 100%;
+        min-width: 0;
+        height: 1.75rem;
+        padding: 0 0.5rem;
+        font-size: 0.8125rem;
+        font-weight: normal;
+        color: var(--bs-body-color, #212529);
+        background-color: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 0.375rem;
+        outline: none;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &::placeholder {
+            color: var(--bs-secondary-color, #6c757d);
+            opacity: 0.55;
+            font-style: italic;
+        }
+
+        &:hover {
+            border-color: var(--bs-secondary-color, #adb5bd);
+        }
+
+        &:focus {
+            border-color: var(--bs-primary, #714b67);
+            box-shadow: 0 0 0 0.15rem rgba(var(--bs-primary-rgb, 113, 75, 103), 0.15);
+        }
+    }
+
+    button.o_o2m_filter_relsel {
+        gap: 0.25rem;
+        cursor: pointer;
+        text-align: left;
+
+        &.o_empty > span {
+            color: var(--bs-secondary-color, #6c757d);
+            opacity: 0.55;
+            font-style: italic;
+        }
+
+        > .fa-caret-down {
+            font-size: 0.7rem;
+            color: var(--bs-secondary-color, #6c757d);
+        }
+    }
+
+    select.o_o2m_filter_select {
+        padding: 0 0.25rem 0 0.4rem;
+        cursor: pointer;
+
+        // Muted look while showing the "all" placeholder option
+        &:has(option:checked[value=""]) {
+            color: var(--bs-secondary-color, #6c757d);
+            font-style: italic;
+        }
+    }
+
+    // Joined start/end inputs styled as a single control, like the core
+    // daterange widget.
+    .o_o2m_filter_date_wrap {
+        height: 1.75rem;
+        padding: 0 0.25rem;
+        background-color: var(--bs-body-bg, #fff);
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 0.375rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            border-color: var(--bs-secondary-color, #adb5bd);
+        }
+
+        &:focus-within {
+            border-color: var(--bs-primary, #714b67);
+            box-shadow: 0 0 0 0.15rem rgba(var(--bs-primary-rgb, 113, 75, 103), 0.15);
+        }
+
+        input {
+            flex: 1 1 0;
+            min-width: 0;
+            height: 100%;
+            padding: 0 0.25rem;
+            font-size: 0.8125rem;
+            font-weight: normal;
+            color: var(--bs-body-color, #212529);
+            background: transparent;
+            border: none;
+            outline: none;
+
+            &::placeholder {
+                color: var(--bs-secondary-color, #6c757d);
+                opacity: 0.55;
+                font-style: italic;
+            }
+        }
+
+        .o_o2m_filter_date_arrow {
+            flex: 0 0 auto;
+            font-size: 0.65rem;
+            color: var(--bs-secondary-color, #6c757d);
+            opacity: 0.6;
+        }
+
+        .o_o2m_filter_date_clear {
+            flex: 0 0 auto;
+            padding: 0 0.25rem;
+            border: none;
+            line-height: 1;
+            font-size: 0.7rem;
+            color: var(--bs-secondary-color, #6c757d);
+
+            &:hover {
+                color: var(--bs-danger, #dc3545);
+            }
+        }
+    }
+}
+
+.o_o2m_filter_relsel_menu {
+    max-height: 16rem;
+    overflow-y: auto;
+    min-width: 10rem;
+}
+
+// Highlighted match inside filtered text cells
+mark.o_o2m_filter_match {
+    padding: 0;
+    color: inherit;
+    background-color: rgba(var(--bs-warning-rgb, 240, 173, 78), 0.45);
+    border-radius: 2px;
+}
+
+// Hierarchy (tree) mode: indentation + expand/collapse caret in the first cell
+.o_o2m_tree_cell_flex {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+
+    .o_o2m_tree_cell_content {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.o_o2m_tree_prefix {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    vertical-align: middle;
+
+    // Generous hit box on parent rows: the indent and the caret both toggle,
+    // without inflating the row height (negative vertical margins).
+    &.o_o2m_tree_clickable {
+        cursor: pointer;
+
+        &:hover .o_o2m_tree_caret {
+            color: var(--bs-primary, #714b67);
+            background-color: rgba(var(--bs-primary-rgb, 113, 75, 103), 0.08);
+        }
+    }
+
+    .o_o2m_tree_caret {
+        min-width: 1.5rem;
+        padding: 0.4rem 0.35rem;
+        margin: -0.4rem 0;
+        text-align: center;
+        border-radius: 0.25rem;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+
+    .o_o2m_tree_gap {
+        display: inline-block;
+        width: 1.5rem;
+    }
+}
+
+// Paste-from-Excel dialog
+.o_o2m_paste_zone {
+    min-height: 11rem;
+    border: 2px dashed var(--bs-border-color, #dee2e6);
+    border-radius: 0.5rem;
+    color: var(--bs-secondary-color, #6c757d);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    &:hover,
+    &:focus {
+        border-color: var(--bs-primary, #714b67);
+        background-color: rgba(var(--bs-primary-rgb, 113, 75, 103), 0.04);
+    }
+}
+
+.o_o2m_paste_preview {
+    max-height: 320px;
+    overflow: auto;
+
+    th {
+        position: sticky;
+        top: 0;
+        background-color: var(--bs-tertiary-bg, #f8f9fa);
+    }
+
+    th,
+    td {
+        max-width: 12rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.8125rem;
+    }
+}
+
+.o_o2m_duplicate_body {
+    .form-label {
+        font-weight: 500;
+    }
+}
+
+@keyframes o_o2m_filter_slide_down {
+    from {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 2.5rem;
+        opacity: 1;
+    }
+}
+
+@keyframes o_o2m_filter_slide_up {
+    from {
+        max-height: 2.5rem;
+        opacity: 1;
+    }
+    to {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        opacity: 0;
+    }
+}
