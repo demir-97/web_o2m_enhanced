@@ -181,14 +181,6 @@ written in the XML keep precedence over the UI setup):
   recordset; a warning is shown when the recordset is larger.
 - Import does not fill one2many or readonly columns; they are reported as ignored.
 
-## Roadmap
-
-This module is actively developed. Upcoming capabilities — included in your
-purchase as free updates for this version:
-
-- Saved filter presets per user
-- Native support for the sale order lines' sections & notes widget, and more
-
 ## Support
 
 Questions, bug reports or feature requests: **meisanqo@outlook.com**

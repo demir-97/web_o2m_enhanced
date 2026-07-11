@@ -1,6 +1,6 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.7',
+    'version': '19.0.1.17.8',
     'category': 'Technical',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
@@ -112,10 +112,6 @@ Safety:
   view (including record-dependent readonly expressions) are never modified
   by bulk edit, import, paste or duplication, and no tool can add lines when
   the list does not allow creation or stage edits when the field is read-only.
-
-On the roadmap:
-
-- Saved filter presets per user, and more.
 
 Known limitations:
 
