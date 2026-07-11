@@ -745,7 +745,17 @@ export class EnhancedListRenderer extends ListRenderer {
             get resizing() {
                 return coreColumnWidths.resizing;
             },
-            resetWidths: () => coreColumnWidths.resetWidths(),
+            resetWidths: () => {
+                if (typeof coreColumnWidths.resetWidths === "function") {
+                    coreColumnWidths.resetWidths();
+                } else {
+                    // Odoo 18's column width hook does not expose resetWidths;
+                    // it resets its frozen widths on window resize, so firing
+                    // one reaches the internal handler (the next patch then
+                    // recomputes the ideal widths).
+                    window.dispatchEvent(new Event("resize"));
+                }
+            },
             onStartResize: (ev) => {
                 coreColumnWidths.onStartResize(ev);
                 this._captureResizeEnd();
