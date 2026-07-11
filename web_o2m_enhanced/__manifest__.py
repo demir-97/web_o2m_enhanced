@@ -1,9 +1,9 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.6',
+    'version': '19.0.1.17.7',
     'category': 'Technical',
     'author': 'Meisanqo',
-    'support': 'meisanqo_solutions@outlook.com',
+    'support': 'meisanqo@outlook.com',
     'summary': 'The missing toolbox for one2many lists',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.

@@ -191,4 +191,4 @@ purchase as free updates for this version:
 
 ## Support
 
-Questions, bug reports or feature requests: **meisanqo_solutions@outlook.com**
+Questions, bug reports or feature requests: **meisanqo@outlook.com**
