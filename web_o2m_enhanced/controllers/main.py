@@ -54,7 +54,7 @@ class O2mEnhancedController(http.Controller):
             ('Content-Disposition', content_disposition(filename)),
         ])
 
-    @http.route('/web_o2m_enhanced/parse_spreadsheet', type='jsonrpc', auth='user')
+    @http.route('/web_o2m_enhanced/parse_spreadsheet', type='json', auth='user')
     def parse_spreadsheet(self, filename, content):
         """Parse an uploaded xlsx/csv file (base64) into a header row and data
         rows; cell interpretation happens client-side against the list's

@@ -102,7 +102,8 @@ function recordCellValue(record, column, field) {
         case "datetime":
             return raw ? raw.toFormat("yyyy-MM-dd HH:mm:ss") : false;
         case "many2one":
-            return raw ? String(raw.display_name || "") : false;
+            // Odoo 18: many2one values in record.data are [id, display_name] pairs.
+            return raw ? String(raw[1] || "") : false;
         case "many2many":
         case "one2many":
             return (raw?.records || [])
@@ -202,7 +203,8 @@ function cellToFieldValue(cell, field, m2oNameMap) {
             if (match.ambiguous) {
                 return { error: ambiguousNameError(name, field, match.ambiguous) };
             }
-            return { value: match };
+            // record.update() expects the Odoo 18 [id, display_name] pair.
+            return { value: [match.id, match.display_name] };
         }
         default:
             return { value: String(cell) };
@@ -242,7 +244,7 @@ function isSameFieldValue(record, name, field, value) {
     const raw = record.data[name];
     switch (field.type) {
         case "many2one":
-            return (raw ? raw.id : false) === (value ? value.id : false);
+            return (raw ? raw[0] : false) === (value ? value[0] : false);
         case "date":
         case "datetime": {
             const rawIso = raw ? raw.toISO() : false;
@@ -318,7 +320,7 @@ function matchRecord(record, column, field, type, value) {
     if (type === "relsel") {
         // `value` is a list of selected record ids (OR semantics).
         if (field.type === "many2one") {
-            return Boolean(raw) && value.includes(raw.id);
+            return Boolean(raw) && value.includes(raw[0]);
         }
         const subRecords = raw?.records || [];
         return subRecords.some((sub) => value.includes(sub.resId));
@@ -712,7 +714,7 @@ export class EnhancedListRenderer extends ListRenderer {
                     this.tableRef.el?.querySelector(".o_o2m_filter_col_input")?.focus();
                 } else if (!active) {
                     for (const picker of Object.values(this.datePickers)) {
-                        picker.close();
+                        picker.close?.();
                     }
                 }
             },
@@ -727,8 +729,10 @@ export class EnhancedListRenderer extends ListRenderer {
         });
         onWillDestroy(() => {
             for (const picker of Object.values(this.datePickers)) {
-                picker.close();
-                picker.disable();
+                // Odoo 18's picker exposes neither close() nor disable(); its
+                // popover closes itself when the anchor leaves the DOM.
+                picker.close?.();
+                picker.disable?.();
             }
             this._removeResizeCapture?.();
         });
@@ -872,23 +876,28 @@ export class EnhancedListRenderer extends ListRenderer {
             }
             const name = column.name;
             if (!this.datePickers[name]) {
-                this.datePickers[name] = this.datetimePickerService.create({
-                    getInputs: () => [
+                // Odoo 18: getInputs is the second argument of create() (it
+                // moved into the params in 19), and the returned picker does
+                // not expose close()/disable().
+                this.datePickers[name] = this.datetimePickerService.create(
+                    {
+                        pickerProps: {
+                            type: "date",
+                            range: true,
+                            value: this._getDateFilterValue(name),
+                        },
+                        onChange: (value) => this._applyDateFilterValue(name, value),
+                        onApply: (value) => this._applyDateFilterValue(name, value),
+                    },
+                    () => [
                         this.tableRef.el?.querySelector(
                             `input.o_o2m_filter_date_start[data-col="${name}"]`
                         ) || null,
                         this.tableRef.el?.querySelector(
                             `input.o_o2m_filter_date_end[data-col="${name}"]`
                         ) || null,
-                    ],
-                    pickerProps: {
-                        type: "date",
-                        range: true,
-                        value: this._getDateFilterValue(name),
-                    },
-                    onChange: (value) => this._applyDateFilterValue(name, value),
-                    onApply: (value) => this._applyDateFilterValue(name, value),
-                });
+                    ]
+                );
             }
             this.datePickers[name].enable();
         }
@@ -1010,7 +1019,7 @@ export class EnhancedListRenderer extends ListRenderer {
         const roots = [];
         for (const record of records) {
             const parentRaw = record.data[parentName];
-            const parent = parentRaw && byResId.get(parentRaw.id);
+            const parent = parentRaw && byResId.get(parentRaw[0]);
             if (parent && parent !== record) {
                 if (!childrenOf.has(parent.id)) {
                     childrenOf.set(parent.id, []);
@@ -1101,19 +1110,19 @@ export class EnhancedListRenderer extends ListRenderer {
     }
 
     /**
-     * Recompute the footer aggregates on the selected rows (StaticList's own
-     * `selection` is hardcoded empty, so the core selection-totals behaviour
-     * never triggers in x2many lists) or, while filtering, on the filtered rows.
+     * Recompute the footer aggregates on the selected rows (StaticList has no
+     * `selection`, so the core selection-totals behaviour never triggers in
+     * x2many lists) or, while filtering, on the filtered rows.
      */
-    computeAggregates() {
+    get aggregates() {
         const bag = this.props.o2mFilter;
         if (!bag || this.props.list.isGrouped) {
-            return super.computeAggregates();
+            return super.aggregates;
         }
         const selected = this.o2mSelectedRecords;
         const filterActive = bag.state.active && bag.hasNeedles();
         if (!selected.length && !filterActive) {
-            return super.computeAggregates();
+            return super.aggregates;
         }
         const records = filterActive ? bag.getFilteredRecords() : this.props.list.records;
         const realProps = this.props;
@@ -1132,7 +1141,7 @@ export class EnhancedListRenderer extends ListRenderer {
             }),
         };
         try {
-            return super.computeAggregates();
+            return super.aggregates;
         } finally {
             this.props = realProps;
         }
@@ -1221,7 +1230,7 @@ export class EnhancedListRenderer extends ListRenderer {
             const raw = record.data[column.name];
             if (field.type === "many2one") {
                 if (raw) {
-                    options.set(raw.id, String(raw.display_name || ""));
+                    options.set(raw[0], String(raw[1] || ""));
                 }
             } else {
                 for (const sub of raw?.records || []) {
@@ -1289,7 +1298,7 @@ export class EnhancedListRenderer extends ListRenderer {
     onDateFilterClear(column) {
         const picker = this.datePickers[column.name];
         if (picker) {
-            picker.close();
+            picker.close?.();
             picker.state.value = [null, null];
         }
         this.props.o2mFilter?.setFilter(column.name, { from: "", to: "" });
@@ -1297,7 +1306,7 @@ export class EnhancedListRenderer extends ListRenderer {
 
     onClearAllFilters() {
         for (const picker of Object.values(this.datePickers)) {
-            picker.close();
+            picker.close?.();
             picker.state.value = [null, null];
         }
         this.props.o2mFilter?.clearAll();
@@ -1425,6 +1434,14 @@ export class EnhancedOne2ManyField extends X2ManyField {
     /** Per-view widget options, from the field tag's options="{...}" dict. */
     get o2mOptions() {
         return this.props.crudOptions || {};
+    }
+
+    /** Odoo 18's X2ManyField has no canCreate getter (added in 19). */
+    get canCreate() {
+        return (
+            ("link" in this.activeActions ? this.activeActions.link : this.activeActions.create) &&
+            !this.props.readonly
+        );
     }
 
     /** True when the widget must not stage changes on existing lines. */
@@ -1810,7 +1827,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
             }
             const raw = record.data[name];
             if (field.type === "many2one") {
-                values[name] = raw ? { id: raw.id, display_name: raw.display_name } : false;
+                values[name] = raw ? [raw[0], raw[1]] : false;
             } else if (field.type === "many2many") {
                 const ids = (raw?.records || [])
                     .map((sub) => sub.resId)

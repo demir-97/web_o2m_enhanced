@@ -1,6 +1,6 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '19.0.1.17.4',
+    'version': '18.0.1.17.4',
     'category': 'Technical',
     'author': 'Greenery',
     'support': 'greenery_solutions@outlook.com',

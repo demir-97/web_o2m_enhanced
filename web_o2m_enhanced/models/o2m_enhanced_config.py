@@ -76,10 +76,10 @@ class O2mEnhancedConfig(models.Model):
         domain="[('model', '=', line_model)]",
         help="These columns get no input in the filter row.")
 
-    _field_uniq = models.Constraint(
-        'unique(field_id)',
-        "There is already a setup for this one2many field.",
-    )
+    _sql_constraints = [
+        ('field_uniq', 'unique(field_id)',
+         "There is already a setup for this one2many field."),
+    ]
 
     @api.depends('model_id.name', 'field_id.field_description')
     def _compute_display_name(self):
