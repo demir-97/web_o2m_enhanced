@@ -106,9 +106,13 @@
     <div style="margin-top: 32px;">
         <h2 style="color: #875A7B; font-size: 24px;">Persistent column widths</h2>
         <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
-            <li><b>Resize once, keep forever</b> &mdash; column widths adjusted by dragging the header separators survive page refreshes, per user and per list.</li>
-            <li><b>One-click reset</b> &mdash; a reset button (shown only when custom widths exist) restores the automatic layout.</li>
+            <li><b>Resize once, keep forever</b> &mdash; drag the header separators to adjust a column; the widths are saved the moment you release the drag and survive page refreshes and navigation.</li>
+            <li><b>Per user, per list</b> &mdash; each user keeps their own widths for each one2many table (stored in the browser, nothing written to the database).</li>
+            <li><b>Layout-proof</b> &mdash; the saved widths are re-applied when the form re-renders or the available space changes (window resize, chatter or sidebar toggle).</li>
+            <li><b>One-click reset</b> &mdash; a <i>Reset column widths</i> button appears in the toolbar only when custom widths exist and restores Odoo's automatic layout.</li>
+            <li><b>Optional</b> &mdash; turn it off per table with the <i>Remember Column Widths</i> switch in the setup form, or <code>save_column_widths: false</code> in the view XML.</li>
         </ul>
+        <img src="column_widths.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Resize columns, keep the widths, reset in one click"/>
     </div>
 
     <div style="margin-top: 32px;">
@@ -176,7 +180,7 @@
         <h2 style="color: #875A7B; font-size: 22px; margin-top: 0;">Support</h2>
         <p style="font-size: 15px; margin-bottom: 0;">
             Questions, bug reports or feature requests:
-            <a href="mailto:greenery_solutions@outlook.com" style="color: #875A7B;"><b>greenery_solutions@outlook.com</b></a>
+            <a href="mailto:meisanqo_solutions@outlook.com" style="color: #875A7B;"><b>meisanqo_solutions@outlook.com</b></a>
         </p>
     </div>
 </section>
