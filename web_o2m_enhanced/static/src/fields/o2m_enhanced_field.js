@@ -1456,7 +1456,12 @@ export class EnhancedOne2ManyField extends X2ManyField {
 
     /** True when the widget must not stage changes on existing lines. */
     get o2mReadonly() {
-        return this.props.readonly || !this.activeActions.write;
+        // Odoo 18 only sets activeActions.write for many2many fields; on a
+        // one2many it stays undefined (Odoo 19 sets it to
+        // `(isMany2Many || !readonly) && evalAction("write")`). Treat write as
+        // allowed unless it is *explicitly* denied (=== false), so bulk edit /
+        // import / paste work on one2many lists as they do in 19.
+        return this.props.readonly || this.activeActions.write === false;
     }
 
     /**

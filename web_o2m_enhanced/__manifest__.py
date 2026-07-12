@@ -1,10 +1,10 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '18.0.1.17.5',
+    'version': '18.0.1.17.6',
     'category': 'Technical',
-    'author': 'Greenery',
-    'support': 'greenery_solutions@outlook.com',
-    'summary': 'The missing toolbox for one2many lists: Excel-like filters, bulk edit, XLSX export, import with update-by-ID, line duplication, persistent column widths — enabled per table from the UI, no XML needed',
+    'author': 'Meisanqo',
+    'support': 'meisanqo@outlook.com',
+    'summary': 'The missing toolbox for one2many lists',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.
 
@@ -112,10 +112,6 @@ Safety:
   view (including record-dependent readonly expressions) are never modified
   by bulk edit, import, paste or duplication, and no tool can add lines when
   the list does not allow creation or stage edits when the field is read-only.
-
-On the roadmap:
-
-- Saved filter presets per user, and more.
 
 Known limitations:
 
