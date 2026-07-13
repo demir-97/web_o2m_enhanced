@@ -151,7 +151,7 @@
                                     />
                                 </t>
                             </select>
-                            <Dropdown t-elif="ftype === 'select'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
+                            <FilterDropdown t-elif="ftype === 'select'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
                                 togglerClass="'o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center w-100' + ((o2mState.cols[column.name] or []).length ? '' : ' o_empty')">
                                 <t t-set-slot="toggler">
                                     <span class="text-truncate flex-grow-1 text-start" t-esc="getSelFilterLabel(column)"/>
@@ -167,7 +167,7 @@
                                         </CheckBox>
                                     </DropdownItem>
                                 </t>
-                            </Dropdown>
+                            </FilterDropdown>
                             <div t-elif="ftype === 'date'" class="o_o2m_filter_date_wrap d-flex align-items-center">
                                 <input
                                     type="text"
@@ -194,7 +194,7 @@
                                     <i class="fa fa-times"/>
                                 </button>
                             </div>
-                            <Dropdown t-elif="ftype === 'relsel'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
+                            <FilterDropdown t-elif="ftype === 'relsel'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
                                 togglerClass="'o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center w-100' + ((o2mState.cols[column.name] or []).length ? '' : ' o_empty')">
                                 <t t-set-slot="toggler">
                                     <span class="text-truncate flex-grow-1 text-start" t-esc="getRelFilterLabel(column)"/>
@@ -213,7 +213,7 @@
                                 <div t-if="!getRelFilterOptions(column).length" class="text-muted fst-italic px-3 py-2">
                                     No records
                                 </div>
-                            </Dropdown>
+                            </FilterDropdown>
                             <input
                                 t-elif="ftype === 'number'"
                                 type="text"

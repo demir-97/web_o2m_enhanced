@@ -1,6 +1,6 @@
 {
     'name': 'One2many Filter, Search, Bulk Edit & Excel Import/Export | Enhanced O2M List Widget',
-    'version': '17.0.1.17.8',
+    'version': '17.0.1.17.9',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
