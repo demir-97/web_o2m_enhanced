@@ -1,3 +1,4 @@
+/** @odoo-module **/
 import { registry } from "@web/core/registry";
 import {
     Component,
@@ -17,8 +18,6 @@ import { Dialog } from "@web/core/dialog/dialog";
 import { parseDate, parseDateTime } from "@web/core/l10n/dates";
 import { _t } from "@web/core/l10n/translation";
 import { download } from "@web/core/network/download";
-import { rpc } from "@web/core/network/rpc";
-import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { ensureArray } from "@web/core/utils/arrays";
 import { escape } from "@web/core/utils/strings";
@@ -26,6 +25,11 @@ import { useDebounced } from "@web/core/utils/timing";
 import { ListRenderer } from "@web/views/list/list_renderer";
 import { X2ManyField, x2ManyField } from "@web/views/fields/x2many/x2many_field";
 import { getFormattedValue } from "@web/views/utils";
+// Odoo 17: ListRenderer.components aliases `Dropdown` to its internal
+// OptionalFieldsDropdown, so import the plain components for the filter menus.
+import { Dropdown } from "@web/core/dropdown/dropdown";
+import { DropdownItem } from "@web/core/dropdown/dropdown_item";
+import { CheckBox } from "@web/core/checkbox/checkbox";
 
 const CLOSE_ANIMATION_MS = 180;
 // Safety cap when loading every page for cross-page filtering.
@@ -699,6 +703,9 @@ export class EnhancedListRenderer extends ListRenderer {
     static rowsTemplate = "web_o2m_enhanced.EnhancedListRenderer.Rows";
     static recordRowTemplate = "web_o2m_enhanced.EnhancedListRenderer.RecordRow";
     static props = [...ListRenderer.props, "o2mFilter?"];
+    // Use the plain Dropdown for the filter menus (core aliases Dropdown to
+    // OptionalFieldsDropdown in its own components map).
+    static components = { ...ListRenderer.components, Dropdown, DropdownItem, CheckBox };
 
     setup() {
         super.setup();
@@ -738,29 +745,11 @@ export class EnhancedListRenderer extends ListRenderer {
         });
 
         // --- Persistent column widths ---
-        // Wrap the core resize handler so the final widths can be saved once
-        // the drag ends (the template reads `this.columnWidths` at event time).
-        const coreColumnWidths = this.columnWidths;
-        this.columnWidths = {
-            get resizing() {
-                return coreColumnWidths.resizing;
-            },
-            resetWidths: () => {
-                if (typeof coreColumnWidths.resetWidths === "function") {
-                    coreColumnWidths.resetWidths();
-                } else {
-                    // Odoo 18's column width hook does not expose resetWidths;
-                    // it resets its frozen widths on window resize, so firing
-                    // one reaches the internal handler (the next patch then
-                    // recomputes the ideal widths).
-                    window.dispatchEvent(new Event("resize"));
-                }
-            },
-            onStartResize: (ev) => {
-                coreColumnWidths.onStartResize(ev);
-                this._captureResizeEnd();
-            },
-        };
+        // Odoo 17's ListRenderer drives resizing through its own `onStartResize`
+        // method and `this.columnWidths` is a plain array (there is no width
+        // hook like in 18/19). The resize interception is therefore done by
+        // overriding `onStartResize` below; here we only re-apply the stored
+        // widths after each render.
         // Re-apply saved widths after each render: this effect is registered
         // after the core one, so it runs once the core widths are in place.
         useEffect(() => this._applyStoredColumnWidths());
@@ -783,6 +772,64 @@ export class EnhancedListRenderer extends ListRenderer {
             }
         });
         onWillUnmount(() => widthObserver.disconnect());
+    }
+
+    /**
+     * Odoo 17 keeps the active columns in `state.columns` (18/19 expose them as
+     * `this.columns`); alias it so the shared code and template keep working.
+     */
+    get columns() {
+        return this.state.columns;
+    }
+
+    /**
+     * Odoo 17 binds the header resize handle to this method directly. Wrap it
+     * so the final widths can be saved once the drag ends.
+     */
+    onStartResize(ev) {
+        super.onStartResize(ev);
+        this._captureResizeEnd();
+    }
+
+    /**
+     * Odoo 17's core `toggleRecordSelection` unconditionally calls
+     * `this.props.list.selectDomain(false)` at the end (18/19 dropped that line).
+     * `selectDomain` only exists on DynamicList; the x2many StaticList used by a
+     * one2many has no such method, so enabling row selectors on the o2m (which
+     * this module does for bulk edit) makes every checkbox click throw
+     * "selectDomain is not a function". Guard it here.
+     */
+    toggleRecordSelection(record, ev) {
+        if (!this.canSelectRecord) {
+            return;
+        }
+        const isRecordPresent = this.props.list.records.includes(this.lastCheckedRecord);
+        if (this.shiftKeyMode && isRecordPresent) {
+            this.toggleRecordShiftSelection(record);
+        } else {
+            record.toggleSelection();
+        }
+        this.lastCheckedRecord = record;
+        this.props.list.selectDomain?.(false);
+    }
+
+    /**
+     * Odoo 17 recomputes the column widths from the *visible* content on every
+     * freeze (whenever `keepColumnWidths` is falsy). Filtering changes which
+     * rows are visible, so without this the columns jump around as the user
+     * picks filter values. Freeze the widths once computed (like 18/19 do), and
+     * only re-measure when the column set changes or the window is resized
+     * (core clears `keepColumnWidths` there).
+     */
+    freezeColumnWidths() {
+        const colCount = this.state.columns.length;
+        if (this._o2mFrozenColCount !== colCount) {
+            this._o2mFrozenColCount = colCount;
+            this.keepColumnWidths = false;
+            this.columnWidths = null;
+        }
+        super.freezeColumnWidths();
+        this.keepColumnWidths = true;
     }
 
     /** Stable per-column keys for the saved widths (field name when possible). */
@@ -872,7 +919,19 @@ export class EnhancedListRenderer extends ListRenderer {
 
     onO2mResetWidths() {
         this.props.o2mFilter?.clearWidths();
-        this.columnWidths.resetWidths();
+        // Odoo 17: drop the frozen widths and inline styles so the core
+        // recomputes the automatic layout from content on the next render.
+        this.keepColumnWidths = false;
+        this.columnWidths = null;
+        const table = this.tableRef.el;
+        if (table) {
+            table.style.width = "";
+            table.style.tableLayout = "";
+            for (const th of table.querySelectorAll("thead th")) {
+                th.style.width = "";
+                th.style.maxWidth = "";
+            }
+        }
         this.render();
     }
 
@@ -1419,6 +1478,10 @@ export class EnhancedOne2ManyField extends X2ManyField {
         this.o2mNotification = useService("notification");
         this.o2mOrm = useService("orm");
         this.o2mDialog = useService("dialog");
+        // Odoo 17 has no standalone `rpc`/`user` exports (added in 18); use the
+        // services instead.
+        this.rpc = useService("rpc");
+        this.user = useService("user");
         this.o2mFilterState = useState({
             active: false,
             closing: false,
@@ -1582,7 +1645,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
 
     /** Column widths are stored per user, parent model and o2m field. */
     get _o2mWidthsStorageKey() {
-        return `web_o2m_enhanced.colwidths.${user.userId}.${this.props.record.resModel}.${this.props.name}`;
+        return `web_o2m_enhanced.colwidths.${this.user.userId}.${this.props.record.resModel}.${this.props.name}`;
     }
 
     o2mLoadColumnWidths() {
@@ -1972,7 +2035,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
                 reader.onerror = () => reject(reader.error);
                 reader.readAsDataURL(file);
             });
-            const { headers, rows } = await rpc("/web_o2m_enhanced/parse_spreadsheet", {
+            const { headers, rows } = await this.rpc("/web_o2m_enhanced/parse_spreadsheet", {
                 filename: file.name,
                 content,
             });

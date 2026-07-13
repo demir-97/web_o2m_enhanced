@@ -80,18 +80,57 @@ class O2mEnhancedController(http.Controller):
         return list(csv.reader(io.StringIO(text), dialect))
 
     def _parse_xlsx(self, data):
-        import openpyxl  # vendored with Odoo (base_import)
-
-        workbook = openpyxl.load_workbook(
-            io.BytesIO(data), read_only=True, data_only=True)
+        """Read the first sheet into a list of rows. Prefer openpyxl, but fall
+        back to xlrd: Odoo 17's requirements ship xlrd (not openpyxl), so on a
+        stock odoo:17 image openpyxl is absent. This mirrors core base_import,
+        which reads xlsx through whichever of the two is installed."""
         try:
-            rows = []
-            for row in workbook.worksheets[0].iter_rows(values_only=True):
-                rows.append([
-                    # date/datetime cells -> ISO strings, the client parses them
-                    cell.isoformat() if hasattr(cell, 'isoformat') else cell
-                    for cell in row
-                ])
-            return rows
-        finally:
-            workbook.close()
+            import openpyxl
+        except ImportError:
+            openpyxl = None
+
+        if openpyxl is not None:
+            workbook = openpyxl.load_workbook(
+                io.BytesIO(data), read_only=True, data_only=True)
+            try:
+                rows = []
+                for row in workbook.worksheets[0].iter_rows(values_only=True):
+                    rows.append([
+                        # date/datetime cells -> ISO strings, the client parses them
+                        cell.isoformat() if hasattr(cell, 'isoformat') else cell
+                        for cell in row
+                    ])
+                return rows
+            finally:
+                workbook.close()
+
+        # Fallback: xlrd 1.x reads .xlsx via its bundled xlsx module.
+        import xlrd
+
+        book = xlrd.open_workbook(file_contents=data)
+        sheet = book.sheet_by_index(0)
+        rows = []
+        for row_index in range(sheet.nrows):
+            rows.append([
+                self._xlrd_cell_value(cell, book) for cell in sheet.row(row_index)
+            ])
+        return rows
+
+    def _xlrd_cell_value(self, cell, book):
+        import xlrd
+
+        if cell.ctype in (xlrd.XL_CELL_EMPTY, xlrd.XL_CELL_BLANK, xlrd.XL_CELL_ERROR):
+            return None
+        if cell.ctype == xlrd.XL_CELL_DATE:
+            # date/datetime -> ISO string, matching the openpyxl branch
+            return xlrd.xldate.xldate_as_datetime(cell.value, book.datemode).isoformat()
+        if cell.ctype == xlrd.XL_CELL_BOOLEAN:
+            return bool(cell.value)
+        if cell.ctype == xlrd.XL_CELL_NUMBER:
+            # xlrd returns every number as float; keep whole numbers as int so
+            # text columns don't get a spurious ".0" (openpyxl does the same).
+            value = cell.value
+            if value == int(value):
+                return int(value)
+            return value
+        return cell.value

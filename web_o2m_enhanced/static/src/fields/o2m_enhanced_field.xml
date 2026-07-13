@@ -151,26 +151,21 @@
                                     />
                                 </t>
                             </select>
-                            <Dropdown t-elif="ftype === 'select'" position="'bottom-start'" menuClass="'o_o2m_filter_relsel_menu'">
-                                <button
-                                    type="button"
-                                    class="o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center"
-                                    t-att-class="(o2mState.cols[column.name] or []).length ? '' : 'o_empty'"
-                                >
+                            <Dropdown t-elif="ftype === 'select'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
+                                togglerClass="'o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center w-100' + ((o2mState.cols[column.name] or []).length ? '' : ' o_empty')">
+                                <t t-set-slot="toggler">
                                     <span class="text-truncate flex-grow-1 text-start" t-esc="getSelFilterLabel(column)"/>
                                     <i class="fa fa-caret-down flex-shrink-0"/>
-                                </button>
-                                <t t-set-slot="content">
-                                    <t t-foreach="getFilterOptions(column)" t-as="opt" t-key="opt[0]">
-                                        <DropdownItem closingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt[0])">
-                                            <CheckBox
-                                                value="isRelSelected(column.name, opt[0])"
-                                                onChange="() => this.toggleRelFilter(column.name, opt[0])"
-                                            >
-                                                <span class="text-truncate" t-esc="opt[1]"/>
-                                            </CheckBox>
-                                        </DropdownItem>
-                                    </t>
+                                </t>
+                                <t t-foreach="getFilterOptions(column)" t-as="opt" t-key="opt[0]">
+                                    <DropdownItem parentClosingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt[0])">
+                                        <CheckBox
+                                            value="isRelSelected(column.name, opt[0])"
+                                            onChange="() => this.toggleRelFilter(column.name, opt[0])"
+                                        >
+                                            <span class="text-truncate" t-esc="opt[1]"/>
+                                        </CheckBox>
+                                    </DropdownItem>
                                 </t>
                             </Dropdown>
                             <div t-elif="ftype === 'date'" class="o_o2m_filter_date_wrap d-flex align-items-center">
@@ -199,30 +194,25 @@
                                     <i class="fa fa-times"/>
                                 </button>
                             </div>
-                            <Dropdown t-elif="ftype === 'relsel'" position="'bottom-start'" menuClass="'o_o2m_filter_relsel_menu'">
-                                <button
-                                    type="button"
-                                    class="o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center"
-                                    t-att-class="(o2mState.cols[column.name] or []).length ? '' : 'o_empty'"
-                                >
+                            <Dropdown t-elif="ftype === 'relsel'" position="'bottom-start'" class="'w-100'" menuClass="'o_o2m_filter_relsel_menu'"
+                                togglerClass="'o_o2m_filter_col_input o_o2m_filter_relsel d-flex align-items-center w-100' + ((o2mState.cols[column.name] or []).length ? '' : ' o_empty')">
+                                <t t-set-slot="toggler">
                                     <span class="text-truncate flex-grow-1 text-start" t-esc="getRelFilterLabel(column)"/>
                                     <i class="fa fa-caret-down flex-shrink-0"/>
-                                </button>
-                                <t t-set-slot="content">
-                                    <t t-foreach="getRelFilterOptions(column)" t-as="opt" t-key="opt.id">
-                                        <DropdownItem closingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt.id)">
-                                            <CheckBox
-                                                value="isRelSelected(column.name, opt.id)"
-                                                onChange="() => this.toggleRelFilter(column.name, opt.id)"
-                                            >
-                                                <span class="text-truncate" t-esc="opt.label"/>
-                                            </CheckBox>
-                                        </DropdownItem>
-                                    </t>
-                                    <div t-if="!getRelFilterOptions(column).length" class="text-muted fst-italic px-3 py-2">
-                                        No records
-                                    </div>
                                 </t>
+                                <t t-foreach="getRelFilterOptions(column)" t-as="opt" t-key="opt.id">
+                                    <DropdownItem parentClosingMode="'none'" onSelected="() => this.toggleRelFilter(column.name, opt.id)">
+                                        <CheckBox
+                                            value="isRelSelected(column.name, opt.id)"
+                                            onChange="() => this.toggleRelFilter(column.name, opt.id)"
+                                        >
+                                            <span class="text-truncate" t-esc="opt.label"/>
+                                        </CheckBox>
+                                    </DropdownItem>
+                                </t>
+                                <div t-if="!getRelFilterOptions(column).length" class="text-muted fst-italic px-3 py-2">
+                                    No records
+                                </div>
                             </Dropdown>
                             <input
                                 t-elif="ftype === 'number'"

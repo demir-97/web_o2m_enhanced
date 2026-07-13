@@ -118,10 +118,24 @@
         }
     }
 
+    // Odoo 17: the Dropdown wraps the toggler in its own .o-dropdown element;
+    // keep that wrapper full-width and shrinkable so the toggler never drives
+    // the column width as the selected-values label grows/shrinks.
+    .o-dropdown {
+        width: 100%;
+        min-width: 0;
+    }
+
     button.o_o2m_filter_relsel {
         gap: 0.25rem;
         cursor: pointer;
         text-align: left;
+
+        // The label must shrink below its text width (it truncates) instead of
+        // contributing its full width to the table column.
+        > span {
+            min-width: 0;
+        }
 
         &.o_empty > span {
             color: var(--bs-secondary-color, #6c757d);
