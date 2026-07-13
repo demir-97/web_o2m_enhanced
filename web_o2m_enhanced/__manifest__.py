@@ -1,6 +1,6 @@
 {
     'name': 'Web O2M Enhanced',
-    'version': '18.0.1.17.6',
+    'version': '18.0.1.17.8',
     'category': 'Technical',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',

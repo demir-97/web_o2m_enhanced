@@ -106,9 +106,13 @@
     <div style="margin-top: 32px;">
         <h2 style="color: #875A7B; font-size: 24px;">Persistent column widths</h2>
         <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px;">
-            <li><b>Resize once, keep forever</b> &mdash; column widths adjusted by dragging the header separators survive page refreshes, per user and per list.</li>
-            <li><b>One-click reset</b> &mdash; a reset button (shown only when custom widths exist) restores the automatic layout.</li>
+            <li><b>Resize once, keep forever</b> &mdash; drag the header separators to adjust a column; the widths are saved the moment you release the drag and survive page refreshes and navigation.</li>
+            <li><b>Per user, per list</b> &mdash; each user keeps their own widths for each one2many table (stored in the browser, nothing written to the database).</li>
+            <li><b>Layout-proof</b> &mdash; the saved widths are re-applied when the form re-renders or the available space changes (window resize, chatter or sidebar toggle).</li>
+            <li><b>One-click reset</b> &mdash; a <i>Reset column widths</i> button appears in the toolbar only when custom widths exist and restores Odoo's automatic layout.</li>
+            <li><b>Optional</b> &mdash; turn it off per table with the <i>Remember Column Widths</i> switch in the setup form, or <code>save_column_widths: false</code> in the view XML.</li>
         </ul>
+        <img src="column_widths.gif" style="width: 100%; border-radius: 8px; margin-top: 16px; border: 1px solid #eee;" alt="Resize columns, keep the widths, reset in one click"/>
     </div>
 
     <div style="margin-top: 32px;">
@@ -117,18 +121,6 @@
             <li><b>Read-only is always respected</b> &mdash; columns read-only on the model or in the view (including record-dependent readonly rules) are never modified by bulk edit, import, paste or duplication.</li>
             <li><b>Permissions too</b> &mdash; no tool adds lines when the list forbids creation, or stages edits when the field is read-only.</li>
             <li><b>Everything is staged</b> &mdash; every write feature lands its changes on the form unsaved, exactly like manual edits: review and save, or discard. Odoo's access rights and business rules apply on save, as always.</li>
-        </ul>
-    </div>
-
-    <div style="margin-top: 32px; padding: 24px; background: #f0f9f9; border-left: 4px solid #00A09D; border-radius: 0 12px 12px 0;">
-        <h2 style="color: #00A09D; font-size: 24px; margin-top: 0;">On the roadmap</h2>
-        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 8px;">
-            This module is actively developed. Upcoming capabilities &mdash; included in
-            your purchase as free updates for this version:
-        </p>
-        <ul style="font-size: 15px; line-height: 1.9; padding-left: 20px; margin-bottom: 0;">
-            <li>Saved filter presets per user</li>
-            <li>Native support for the sale order lines' sections &amp; notes widget, and more</li>
         </ul>
     </div>
 
@@ -176,7 +168,7 @@
         <h2 style="color: #875A7B; font-size: 22px; margin-top: 0;">Support</h2>
         <p style="font-size: 15px; margin-bottom: 0;">
             Questions, bug reports or feature requests:
-            <a href="mailto:greenery_solutions@outlook.com" style="color: #875A7B;"><b>greenery_solutions@outlook.com</b></a>
+            <a href="mailto:meisanqo@outlook.com" style="color: #875A7B;"><b>meisanqo@outlook.com</b></a>
         </p>
     </div>
 </section>
