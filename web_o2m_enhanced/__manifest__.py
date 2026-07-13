@@ -4,7 +4,7 @@
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
-    'summary': 'Filter, search, bulk edit and mass update one2many lines. Excel/XLSX import, export and copy-paste from spreadsheets. Duplicate lines, saved column widths, tree view. Works on any list in a form: sale order lines, invoice lines and more.',
+    'summary': 'Filter, search, bulk edit and mass update one2many lines. Excel/XLSX import, export and copy-paste from spreadsheets. Duplicate lines, saved column widths, tree view. Works on any one2many list in a form view.',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.
 
