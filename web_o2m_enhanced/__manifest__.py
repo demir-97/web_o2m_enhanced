@@ -134,6 +134,6 @@ Usage: add widget="one2many_enhanced" to a one2many <field> tag in a form view.
     },
     'installable': True,
     'license': 'OPL-1',
-    'price': 20.0,
+    'price': 79.0,
     'currency': 'EUR',
 }
