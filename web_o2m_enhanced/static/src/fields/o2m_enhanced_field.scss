@@ -234,6 +234,13 @@ mark.o_o2m_filter_match {
     border-radius: 2px;
 }
 
+// Same styling for widget-rendered cells, painted through the CSS Custom
+// Highlight API (mark elements cannot be injected into Field components).
+::highlight(o2m-filter-match) {
+    color: inherit;
+    background-color: rgba(var(--bs-warning-rgb, 240, 173, 78), 0.45);
+}
+
 // Hierarchy (tree) mode: indentation + expand/collapse caret in the first cell
 .o_o2m_tree_cell_flex {
     display: flex;
