@@ -694,6 +694,28 @@ export class O2mDuplicateDialog extends Component {
     }
 }
 
+// Filter-match highlighting for widget-rendered cells. Core renders a column
+// through a full Field component whenever it has a widget (canUseFormatter
+// refuses it), so the <mark> wrapping done in getFormattedValue never reaches
+// those cells. The CSS Custom Highlight API paints text ranges without
+// touching the DOM Owl owns. The registry unions the ranges of every enhanced
+// list on the page under a single highlight name.
+const o2mHighlightRanges = new Map();
+function refreshO2mHighlights() {
+    if (typeof Highlight === "undefined" || !CSS.highlights) {
+        return;
+    }
+    const ranges = [];
+    for (const rs of o2mHighlightRanges.values()) {
+        ranges.push(...rs);
+    }
+    if (ranges.length) {
+        CSS.highlights.set("o2m-filter-match", new Highlight(...ranges));
+    } else {
+        CSS.highlights.delete("o2m-filter-match");
+    }
+}
+
 export class EnhancedListRenderer extends ListRenderer {
     static template = "web_o2m_enhanced.EnhancedListRenderer";
     static rowsTemplate = "web_o2m_enhanced.EnhancedListRenderer.Rows";
@@ -704,6 +726,13 @@ export class EnhancedListRenderer extends ListRenderer {
         super.setup();
         this.datetimePickerService = useService("datetime_picker");
         this.datePickers = {};
+        // Repaint the filter-match highlights of widget-rendered cells after
+        // each render; drop this renderer's ranges when it goes away.
+        useEffect(() => this._applyFilterHighlights());
+        onWillDestroy(() => {
+            o2mHighlightRanges.delete(this);
+            refreshO2mHighlights();
+        });
         this.o2mImportInputRef = useRef("o2mImportInput");
         this.o2mTreeState = useState({ active: false, collapsed: {} });
         this._o2mTreeInfo = null;
@@ -1249,6 +1278,58 @@ export class EnhancedListRenderer extends ListRenderer {
             index = at + needle.length;
         }
         return markup(html);
+    }
+
+    /**
+     * Paint the filter needle inside cells rendered by Field components
+     * (columns with a widget): getFormattedValue never runs for those, so the
+     * <mark> path cannot reach them. Text ranges are registered in the CSS
+     * Custom Highlight API — no DOM mutation, Owl's rendering stays intact.
+     * Cells already containing a <mark> (formatter path) and the row in
+     * edition (inputs) are skipped.
+     */
+    _applyFilterHighlights() {
+        if (typeof Highlight === "undefined" || !CSS.highlights) {
+            return;
+        }
+        const ranges = [];
+        const state = this.o2mState;
+        const table = this.tableRef.el;
+        if (table && state?.active && !state.closing) {
+            for (const [name, rawNeedle] of Object.entries(state.cols)) {
+                const field = this.props.list.fields[name];
+                const ftype = field && getFilterType(field);
+                if (ftype !== "text" && ftype !== "number") {
+                    continue;
+                }
+                const needle = String(rawNeedle ?? "").trim().toLowerCase();
+                if (!needle || (ftype === "number" && isNumericCondition(needle))) {
+                    continue;
+                }
+                const cells = table.querySelectorAll(
+                    `tbody tr.o_data_row:not(.o_selected_row) td.o_data_cell[name="${name}"]`
+                );
+                for (const cell of cells) {
+                    if (cell.querySelector("mark.o_o2m_filter_match")) {
+                        continue;
+                    }
+                    const walker = document.createTreeWalker(cell, NodeFilter.SHOW_TEXT);
+                    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+                        const text = node.nodeValue.toLowerCase();
+                        let at = text.indexOf(needle);
+                        while (at !== -1) {
+                            const range = new Range();
+                            range.setStart(node, at);
+                            range.setEnd(node, at + needle.length);
+                            ranges.push(range);
+                            at = text.indexOf(needle, at + needle.length);
+                        }
+                    }
+                }
+            }
+        }
+        o2mHighlightRanges.set(this, ranges);
+        refreshO2mHighlights();
     }
 
     getColumnFilterType(column) {
