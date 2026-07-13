@@ -1,7 +1,7 @@
 {
     'name': 'Web O2M Enhanced',
     'version': '18.0.1.17.8',
-    'category': 'Technical',
+    'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
     'summary': 'The missing toolbox for one2many lists',
