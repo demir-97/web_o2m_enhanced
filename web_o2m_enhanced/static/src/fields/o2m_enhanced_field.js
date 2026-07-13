@@ -907,6 +907,31 @@ export class EnhancedListRenderer extends ListRenderer {
         });
     }
 
+    /**
+     * Core's document click handler leaves edit mode whenever a click lands
+     * on the table but not inside a data row — and leaving edit mode makes
+     * core abandon a freshly added empty line. With the filter UI open that
+     * happens accidentally: a layout shift between mousedown and mouseup
+     * (column widths re-applied, cells re-rendered on the field commit) makes
+     * the browser fire the click on the rows' common ancestor (tbody/table),
+     * and the filter dropdown menus render in a portal outside the table.
+     * Keep the edition in those cases; genuinely external clicks still leave
+     * edit mode through super.
+     */
+    onGlobalClick(ev) {
+        if (this.o2mState?.active) {
+            const target = ev.target;
+            if (
+                !target.isConnected ||
+                (this.tableRef.el && this.tableRef.el.contains(target)) ||
+                target.closest?.(".o_o2m_filter_relsel_menu")
+            ) {
+                return;
+            }
+        }
+        super.onGlobalClick(ev);
+    }
+
     get o2mState() {
         return this.props.o2mFilter?.state;
     }
@@ -931,7 +956,21 @@ export class EnhancedListRenderer extends ListRenderer {
             return this.props.list.records;
         }
         const filterActive = bag.state.active;
-        let all = filterActive ? bag.getFilteredRecords() : this.props.list.records;
+        // The bag reads the records through the *field* component's reactive
+        // proxy, so its record objects are different proxy instances than the
+        // ones behind this renderer's props.list. Core compares records by
+        // strict identity (e.g. onCellClicked's `this.editedRecord === record`
+        // fast path); rendering the bag's instances makes that check fail and
+        // a click on a cell of the row in edition re-enters edit mode, which
+        // first *leaves* it — abandoning (deleting) a freshly added empty
+        // line. Remap the filtered records to this renderer's own instances.
+        let all;
+        if (filterActive) {
+            const own = new Map(this.props.list.records.map((r) => [r.id, r]));
+            all = bag.getFilteredRecords().map((r) => own.get(r.id) || r);
+        } else {
+            all = this.props.list.records;
+        }
         if (this.o2mTreeActive) {
             this._o2mTreeInfo = this._o2mComputeTree(all);
             all = this._o2mTreeInfo.visible;
@@ -943,11 +982,13 @@ export class EnhancedListRenderer extends ListRenderer {
         }
         const { offset, pageSize } = bag.state;
         const page = pageSize ? all.slice(offset, offset + pageSize) : [...all];
-        // Keep the row being edited (e.g. a freshly added line) on screen even
-        // if client-side paging would put it on another page.
+        // Keep the row being edited and unsaved new rows on screen even if
+        // client-side paging would put them on another page.
         const edited = this.props.list.editedRecord;
-        if (edited && all.includes(edited) && !page.includes(edited)) {
-            page.push(edited);
+        for (const record of all) {
+            if (!page.includes(record) && (record === edited || record.isNew)) {
+                page.push(record);
+            }
         }
         return page;
     }
@@ -1477,13 +1518,17 @@ export class EnhancedOne2ManyField extends X2ManyField {
                 return column && field ? [column, field, getFilterType(field), value] : null;
             })
             .filter(Boolean);
-        // The row currently being edited (e.g. a freshly added line) always
-        // stays visible, even when it doesn't match the filters — otherwise
-        // it would vanish mid-edit.
+        // The row currently being edited and unsaved new rows always stay
+        // visible, even when they don't match the filters — otherwise they
+        // would vanish mid-edit. New rows must be covered on their own (not
+        // only via editedRecord): while the focus moves between two cells the
+        // record briefly leaves edition, and if that render dropped the row
+        // the click would land on nothing and core would abandon the line.
         const editedRecord = this.list.editedRecord;
         return records.filter(
             (record) =>
                 record === editedRecord ||
+                record.isNew ||
                 filters.every(([column, field, type, value]) =>
                     matchRecord(record, column, field, type, value)
                 )
