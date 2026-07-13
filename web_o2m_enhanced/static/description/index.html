@@ -1,7 +1,9 @@
 <section style="max-width: 900px; margin: 0 auto; padding: 32px 16px; font-family: Arial, Helvetica, sans-serif; color: #333;">
-    <div style="text-align: center; padding: 40px 24px; background: linear-gradient(135deg, #875A7B 0%, #5E3C58 100%); border-radius: 12px; color: #fff;">
-        <h1 style="margin: 0 0 12px; font-size: 32px; color: #fff;">O2M Enhanced &mdash; The Missing Toolbox for One2many Lists</h1>
-        <p style="margin: 0; font-size: 18px; opacity: 0.9;">
+    <!-- apps.odoo.com strips background/gradient styles but keeps text colors:
+         every text color here must stay readable on a plain white page. -->
+    <div style="text-align: center; padding: 40px 24px; background-color: #f6f1f5; border: 1px solid #e4d9e1; border-radius: 12px;">
+        <h1 style="margin: 0 0 12px; font-size: 32px; color: #5E3C58;">O2M Enhanced &mdash; The Missing Toolbox for One2many Lists</h1>
+        <p style="margin: 0; font-size: 18px; color: #555;">
             One drop-in widget that upgrades Odoo's embedded one2many lists with the
             capabilities users expect from a spreadsheet: Excel-like filters, bulk edit,
             XLSX export &amp; import, paste from Excel, line duplication, hierarchy view.
@@ -132,7 +134,7 @@
             its one2many table, choose the options and save &mdash; done.
         </p>
         <p style="font-size: 15px; line-height: 1.6;"><b>Or in the view XML:</b> add the widget to any one2many field in a form view:</p>
-        <pre style="background: #2b2b2b; color: #eee; padding: 16px; border-radius: 8px; font-size: 14px; overflow-x: auto;">&lt;field name="order_line" widget="one2many_enhanced"&gt;
+        <pre style="background-color: #f5f5f5; color: #333; border: 1px solid #ddd; padding: 16px; border-radius: 8px; font-size: 14px; overflow-x: auto;">&lt;field name="order_line" widget="one2many_enhanced"&gt;
     &lt;list&gt;
         &lt;field name="product_id"/&gt;
         &lt;field name="name"/&gt;
