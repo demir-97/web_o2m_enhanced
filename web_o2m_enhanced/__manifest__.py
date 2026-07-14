@@ -1,10 +1,10 @@
 {
-    'name': 'One2many Filter, Search, Bulk Edit & Excel Import/Export | Enhanced O2M List Widget',
-    'version': '19.0.1.17.12',
+    'name': 'One2many Filter, Search, Bulk Edit, Mass Edit & Excel Import/Export | Table Filter | Enhanced O2M List Widget',
+    'version': '19.0.1.17.13',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
-    'summary': 'One2many list filter and table filter with search, bulk edit and mass update of lines. Excel import and export (XLSX), copy and paste from spreadsheets, duplicate lines, saved column widths, tree view. Works on any one2many table or list view in a form.',
+    'summary': 'One2many list filter and table filter: filter one2many lines per column, with search, bulk edit, mass editing and mass update. Excel import and Excel export (XLSX), paste from Excel, copy paste from spreadsheets, duplicate lines, saved column widths, tree view. Works on sale order lines, invoice lines and any x2many list view in a form.',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.
 
