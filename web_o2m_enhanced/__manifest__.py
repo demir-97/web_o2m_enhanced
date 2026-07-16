@@ -1,10 +1,10 @@
 {
-    'name': 'One2many Filter, Search, Bulk Edit, Mass Edit & Excel Import/Export | Table Filter | Enhanced O2M List Widget',
-    'version': '19.0.1.17.14',
+    'name': 'Ultimate One2Many Toolbox | One2many Filter, Search, Bulk Edit, Mass Edit, Excel Import/Export, Paste from Excel, Duplicate Lines, Column Widths, Hierarchy Tree View | Table Filter, O2M List Widget',
+    'version': '19.0.1.17.15',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
-    'summary': 'One2many list filter and table filter: filter one2many lines per column, with search, bulk edit, multi edit, mass editing and mass update. Excel import and Excel export (XLSX, CSV import), download Excel of the filtered lines, paste from Excel, copy paste from spreadsheets. Duplicate lines, resize columns and save column widths, hierarchy tree view. Works on sale order lines, invoice lines and any x2many list view in a form.',
+    'summary': 'One2many list filter and table filter: filter one2many lines per column (text, number, date range, selection, many2one) with search, live match highlighting and cross-page filtering; footer totals (sum, average, min, max) recomputed on the filtered rows. Bulk edit, multi edit, mass editing and mass update with row selection checkboxes: filter, select all, update every matching line at once. Excel import and Excel export (XLSX, CSV import), download Excel of the filtered lines, paste from Excel, copy paste from spreadsheets. Duplicate lines, resize columns and save column widths, hierarchy tree view. No-code setup: enable the widget on any table from Settings, no XML needed. Works on sale order lines, purchase order lines, invoice lines, BoM lines, stock moves and any one2many or x2many list view in a form.',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.
 
