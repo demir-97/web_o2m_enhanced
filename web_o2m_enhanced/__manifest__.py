@@ -1,10 +1,10 @@
 {
     'name': 'Ultimate One2many Toolbox',
-    'version': '19.0.1.17.16',
+    'version': '19.0.1.17.17',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
-    'summary': 'Filter, bulk edit and Excel import/export for one2many lists — no code.',
+    'summary': 'One2many filter and table filter for embedded lists: filter one2many lines per column with search, then bulk edit, multi edit or mass update every matching line at once. Excel import and Excel export (XLSX, CSV import), paste from Excel, duplicate lines, resize columns and save column widths, hierarchy tree view. Mass editing on sale order lines, invoice lines and any x2many list view. No code: enable it per table from Settings.',
     'description': """
 The missing toolbox for Odoo's embedded one2many lists.
 
