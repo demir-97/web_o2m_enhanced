@@ -1,15 +1,15 @@
 {
     'name': 'Ultimate One2many Toolbox',
-    'version': '18.0.1.17.17',
+    'version': '18.0.1.17.18',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
-    'summary': 'One2many filter and table filter for embedded lists: filter one2many lines per column with search, then bulk edit, multi edit or mass update every matching line at once. Excel import and Excel export (XLSX, CSV import), paste from Excel, duplicate lines, resize columns and save column widths, hierarchy tree view. Mass editing on sale order lines, invoice lines and any x2many list view. No code: enable it per table from Settings.',
+    'summary': 'One2many filter and table filter for embedded lists: filter one2many lines per column with search, then bulk edit, multi edit or mass update every matching line at once. Excel import and Excel export (XLSX, CSV import), paste from Excel, duplicate lines, resize columns and save column widths, hierarchy tree view. Mass editing on sale order lines, invoice lines and any other x2many table: one2many and many2many list views alike. No code: enable it per table from Settings.',
     'description': """
-The missing toolbox for Odoo's embedded one2many lists.
+The missing toolbox for Odoo's embedded one2many and many2many lists.
 
 Adds a single drop-in field widget, `one2many_enhanced`, usable on any
-one2many field rendered as a list view. Its scope is the overall usability of
+one2many or many2many field rendered as a list view. Its scope is the overall usability of
 embedded lists: it progressively upgrades them with the capabilities users
 expect from a spreadsheet-like table, without touching the underlying models
 or stored data.
@@ -118,7 +118,17 @@ Known limitations:
 - Grouped embedded lists are not supported (the filter button is hidden).
 - Filtering searches at most the first 1000 records of the recordset.
 
-Usage: add widget="one2many_enhanced" to a one2many <field> tag in a form view.
+Usage: add widget="one2many_enhanced" to a one2many or many2many <field> tag
+in a form view.
+
+On a many2many table, remember that each row is a record shared with every
+other document that links it: editing a row changes that record everywhere,
+and importing or duplicating rows creates new records. Removing a row only
+unlinks it, exactly as Odoo does. The setup screen says so when you pick a
+many2many field. Fields displayed with a tag-style widget
+(many2many_tags, many2many_checkboxes, ...) draw no table, so there is
+nothing for the enhanced table to replace; it applies to fields rendered as
+a list.
 """,
     'depends': ['web'],
     'images': ['static/description/banner.png'],

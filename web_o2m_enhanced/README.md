@@ -1,6 +1,6 @@
 # Web O2M Enhanced
 
-**The missing toolbox for Odoo's embedded one2many lists.**
+**The missing toolbox for Odoo's embedded one2many and many2many lists.**
 
 Odoo's one2many lists (order lines, move lines, BoM components, ...) are bare tables:
 no search, no export, no quick line operations. This module provides a single drop-in
@@ -180,6 +180,13 @@ written in the XML keep precedence over the UI setup):
 - Client-side filtering/export is capped at the first 1000 records of the
   recordset; a warning is shown when the recordset is larger.
 - Import does not fill one2many or readonly columns; they are reported as ignored.
+- Fields shown with a tag-style widget (`many2many_tags`,
+  `many2many_checkboxes`, ...) draw no table at all, so the enhanced table has
+  nothing to replace there. It applies to fields rendered as a list.
+- On a many2many table each row is a record shared with every other document
+  that links it, so editing a row changes that record everywhere, and import
+  and duplication create new records. Removing a row only unlinks it. The
+  setup screen warns about this when a many2many field is selected.
 
 ## Support
 
