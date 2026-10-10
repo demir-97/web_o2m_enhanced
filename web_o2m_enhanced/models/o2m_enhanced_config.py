@@ -17,8 +17,9 @@ OPTION_FLAGS = (
 class O2mEnhancedConfig(models.Model):
     """No-code setup of the one2many_enhanced widget.
 
-    Each record enables the widget (with the chosen options) on one one2many
-    field, in every form view displaying it, without touching any view XML.
+    Each record enables the widget (with the chosen options) on one x2many
+    field (one2many or many2many), in every form view displaying it, without
+    touching any view XML.
     The injection happens in ir.ui.view._postprocess_tag_field().
     """
     _name = 'o2m.enhanced.config'
@@ -28,14 +29,15 @@ class O2mEnhancedConfig(models.Model):
     active = fields.Boolean(default=True)
     model_id = fields.Many2one(
         'ir.model', string='Model', required=True, ondelete='cascade',
-        help="Model whose form views contain the one2many table "
+        help="Model whose form views contain the table "
              "(e.g. Sales Order for its order lines).")
     model_name = fields.Char(
         related='model_id.model', store=True, string='Model Name')
     field_id = fields.Many2one(
         'ir.model.fields', string='Table', required=True, ondelete='cascade',
-        domain="[('model_id', '=', model_id), ('ttype', '=', 'one2many')]",
-        help="The one2many field displayed as an embedded table in the form.")
+        domain="[('model_id', '=', model_id), ('ttype', 'in', ['one2many', 'many2many'])]",
+        help="The one2many or many2many field displayed as an embedded table "
+             "in the form.")
     field_name = fields.Char(related='field_id.name', store=True)
     line_model = fields.Char(related='field_id.relation', string='Line Model')
     force_widget = fields.Boolean(
@@ -45,6 +47,8 @@ class O2mEnhancedConfig(models.Model):
              "replace it with the enhanced table anyway; the specialized "
              "widget's own features will not be available.")
     custom_widget_warning = fields.Char(compute='_compute_custom_widget_warning')
+    field_ttype = fields.Selection(related='field_id.ttype', string='Field Type')
+    shared_records_warning = fields.Char(compute='_compute_shared_records_warning')
 
     default_open = fields.Boolean(
         string="Open Filters by Default",
@@ -78,7 +82,7 @@ class O2mEnhancedConfig(models.Model):
 
     _sql_constraints = [
         ('field_uniq', 'unique(field_id)',
-         "There is already a setup for this one2many field."),
+         "There is already a setup for this field."),
     ]
 
     @api.depends('model_id.name', 'field_id.field_description')
@@ -97,11 +101,20 @@ class O2mEnhancedConfig(models.Model):
             field_name = config.field_id.name
             if not model_name or not field_name or model_name not in self.env:
                 continue
-            widgets = config._find_custom_widgets(model_name, field_name)
+            widgets, listless = config._find_custom_widgets(model_name, field_name)
             if not widgets:
                 continue
             names = ", ".join(sorted(widgets))
-            if config.force_widget:
+            if listless:
+                # No list arch to render: the setup cannot apply at all, with
+                # or without Override Custom Widget.
+                config.custom_widget_warning = _(
+                    'This field is displayed with the widget "%s", which draws no '
+                    'table (tags, checkboxes, ...), so the enhanced table has '
+                    'nothing to replace and this setup will not apply. It works on '
+                    'fields rendered as a list: either remove the widget from the '
+                    'view, or pick another field.', ", ".join(sorted(listless)))
+            elif config.force_widget:
                 config.custom_widget_warning = _(
                     'This table is normally displayed with the specialized widget "%s". '
                     'It will be replaced by the enhanced table: the specialized widget\'s '
@@ -113,9 +126,15 @@ class O2mEnhancedConfig(models.Model):
                     'replace it anyway.', names)
 
     def _find_custom_widgets(self, model_name, field_name):
-        """Names of non-standard widgets displaying `field_name` in the
-        model's form views (combined archs, before any widget injection)."""
+        """Non-standard widgets displaying `field_name` in the model's form
+        views (combined archs, before any widget injection).
+
+        Returns ``(widgets, listless)``, where ``listless`` holds those of
+        them whose node carries no list arch -- tags and the like, which the
+        enhanced table cannot replace because there is no table to draw.
+        """
         widgets = set()
+        listless = set()
         views = self.env['ir.ui.view'].sudo().search([
             ('model', '=', model_name),
             ('type', '=', 'form'),
@@ -133,17 +152,42 @@ class O2mEnhancedConfig(models.Model):
                 if (
                     node.get('name') == field_name
                     and widget
-                    and widget not in ('one2many', 'one2many_enhanced')
+                    and widget not in ('one2many', 'many2many', 'one2many_enhanced')
                 ):
                     widgets.add(widget)
-        return widgets
+                    if node.find('list') is None and node.find('tree') is None:
+                        listless.add(widget)
+        return widgets, listless
+
+    @api.depends('field_id.ttype', 'line_model')
+    def _compute_shared_records_warning(self):
+        # A many2many row is a record of its own, shared with every other
+        # document linking it -- unlike a one2many child, which belongs to
+        # this parent. Say so where the table is turned on, because the
+        # bulk-edit, import and duplicate features then reach much further
+        # than the form the user is looking at.
+        for config in self:
+            if config.field_ttype == 'many2many':
+                config.shared_records_warning = _(
+                    "This is a many2many table, so each row is a %(model)s record shared with "
+                    "every other document that links it. Editing a row here changes that "
+                    "record everywhere, and importing or duplicating rows creates new %(model)s "
+                    "records. Filtering, sorting, column widths and export only read.",
+                    model=config.line_model or _('linked'),
+                )
+            else:
+                config.shared_records_warning = False
 
     @api.constrains('model_id', 'field_id')
     def _check_field(self):
         for config in self:
-            if config.field_id.model_id != config.model_id or config.field_id.ttype != 'one2many':
-                raise ValidationError(
-                    _("The field must be a one2many field of the selected model."))
+            if (
+                config.field_id.model_id != config.model_id
+                or config.field_id.ttype not in ('one2many', 'many2many')
+            ):
+                raise ValidationError(_(
+                    "The field must be a one2many or many2many field of the "
+                    "selected model."))
 
     @api.onchange('model_id')
     def _onchange_model_id(self):
