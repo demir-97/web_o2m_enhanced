@@ -1,6 +1,6 @@
 {
-    'name': 'Ultimate One2many Toolbox',
-    'version': '18.0.1.17.18',
+    'name': "Ultimate One2many & Many2many Toolbox",
+    'version': '18.0.1.17.19',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
