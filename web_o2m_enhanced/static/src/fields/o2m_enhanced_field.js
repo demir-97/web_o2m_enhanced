@@ -6,12 +6,18 @@ import {
     onPatched,
     onWillDestroy,
     onWillStart,
+    htmlEscape,
     onWillUnmount,
+    proxy,
+    signal,
     status,
-    useEffect,
-    useRef,
-    useState,
+    t,
+    useProps,
 } from "@odoo/owl";
+// Owl 3's `useEffect` re-runs on signal changes, not after each render; the
+// compatibility layer keeps the Owl 2 "after every patch, with dependencies"
+// hook under this name, and `render()` the imperative re-render.
+import { render, useLayoutEffect } from "@web/owl2/utils";
 import { browser } from "@web/core/browser/browser";
 import { Dialog } from "@web/core/dialog/dialog";
 import { parseDate, parseDateTime } from "@web/core/l10n/dates";
@@ -21,9 +27,8 @@ import { rpc } from "@web/core/network/rpc";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
 import { ensureArray } from "@web/core/utils/arrays";
-import { escape } from "@web/core/utils/strings";
 import { useDebounced } from "@web/core/utils/timing";
-import { ListRenderer } from "@web/views/list/list_renderer";
+import { ListRenderer, listRendererProps } from "@web/views/list/list_renderer";
 import { X2ManyField, x2ManyField } from "@web/views/fields/x2many/x2many_field";
 import { getFormattedValue } from "@web/views/utils";
 
@@ -383,16 +388,18 @@ export function parseClipboardTable(text) {
 export class O2mPasteDialog extends Component {
     static template = "web_o2m_enhanced.O2mPasteDialog";
     static components = { Dialog };
-    static props = {
-        close: Function,
-        confirm: Function,
-        columns: Array, // [{name, label}] of the list's spreadsheet columns
-    };
+    props = useProps({
+        close: t.function(),
+        confirm: t.function(),
+        // [{name, label}] of the list's spreadsheet columns
+        columns: t.array(),
+    });
+
+    pasteAreaRef = signal.ref();
 
     setup() {
-        this.state = useState({ text: "", headersOverride: null });
+        this.state = proxy({ text: "", headersOverride: null });
         this.title = _t("Paste from Excel");
-        this.pasteAreaRef = useRef("pasteArea");
         onWillStart(async () => {
             // Best effort: pre-fill with the clipboard when the browser allows.
             try {
@@ -402,10 +409,10 @@ export class O2mPasteDialog extends Component {
             }
         });
         // (Re)focus the paste zone whenever it is shown, so Ctrl+V just works.
-        useEffect(
+        useLayoutEffect(
             (hasRows) => {
                 if (!hasRows) {
-                    this.pasteAreaRef.el?.focus();
+                    this.pasteAreaRef()?.focus();
                 }
             },
             () => [this.parsedRows.length > 0]
@@ -520,16 +527,16 @@ export class O2mPasteDialog extends Component {
 export class O2mBulkEditDialog extends Component {
     static template = "web_o2m_enhanced.O2mBulkEditDialog";
     static components = { Dialog };
-    static props = {
-        close: Function,
-        confirm: Function,
-        fields: Array,
-        count: Number,
-    };
+    props = useProps({
+        close: t.function(),
+        confirm: t.function(),
+        fields: t.array(),
+        count: t.number(),
+    });
 
     setup() {
         this.orm = useService("orm");
-        this.state = useState({
+        this.state = proxy({
             fieldName: this.props.fields[0]?.name || "",
             text: "",
             boolChoice: "true",
@@ -665,14 +672,14 @@ export class O2mBulkEditDialog extends Component {
 export class O2mDuplicateDialog extends Component {
     static template = "web_o2m_enhanced.O2mDuplicateDialog";
     static components = { Dialog };
-    static props = {
-        close: Function,
-        confirm: Function,
-        count: Number,
-    };
+    props = useProps({
+        close: t.function(),
+        confirm: t.function(),
+        count: t.number(),
+    });
 
     setup() {
-        this.state = useState({ count: 1 });
+        this.state = proxy({ count: 1 });
         this.title = _t("Duplicate lines");
         this.subtitle = _t("Create copies of the %s selected line(s).", this.props.count);
         this.maxCopies = MAX_LINE_COPIES;
@@ -718,7 +725,14 @@ export class EnhancedListRenderer extends ListRenderer {
     static template = "web_o2m_enhanced.EnhancedListRenderer";
     static rowsTemplate = "web_o2m_enhanced.EnhancedListRenderer.Rows";
     static recordRowTemplate = "web_o2m_enhanced.EnhancedListRenderer.RecordRow";
-    static props = [...ListRenderer.props, "o2mFilter?"];
+    // ListRenderer.props no longer exists on the class in Odoo 20: core exports
+    // the schema separately so subclasses can extend it.
+    props = useProps({
+        ...listRendererProps,
+        o2mFilter: t.any().optional(),
+    });
+
+    o2mImportInputRef = signal.ref();
 
     setup() {
         super.setup();
@@ -726,19 +740,19 @@ export class EnhancedListRenderer extends ListRenderer {
         this.datePickers = {};
         // Repaint the filter-match highlights of widget-rendered cells after
         // each render; drop this renderer's ranges when it goes away.
-        useEffect(() => this._applyFilterHighlights());
+        useLayoutEffect(() => this._applyFilterHighlights());
         onWillDestroy(() => {
             o2mHighlightRanges.delete(this);
             refreshO2mHighlights();
         });
-        this.o2mImportInputRef = useRef("o2mImportInput");
-        this.o2mTreeState = useState({ active: false, collapsed: {} });
+        this.o2mTreeState = proxy({ active: false, collapsed: {} });
         this._o2mTreeInfo = null;
-        useEffect(
+        this._o2mDatePickerInputs = {};
+        useLayoutEffect(
             (active, closing) => {
                 if (active && !closing) {
                     this._enableDatePickers();
-                    this.tableRef.el?.querySelector(".o_o2m_filter_col_input")?.focus();
+                    this.tableRef()?.querySelector(".o_o2m_filter_col_input")?.focus();
                 } else if (!active) {
                     for (const picker of Object.values(this.datePickers)) {
                         picker.close();
@@ -757,7 +771,7 @@ export class EnhancedListRenderer extends ListRenderer {
         onWillDestroy(() => {
             for (const picker of Object.values(this.datePickers)) {
                 picker.close();
-                picker.disable();
+                picker.destroy();
             }
             this._removeResizeCapture?.();
         });
@@ -776,9 +790,10 @@ export class EnhancedListRenderer extends ListRenderer {
                 this._captureResizeEnd();
             },
         };
-        // Re-apply saved widths after each render: this effect is registered
-        // after the core one, so it runs once the core widths are in place.
-        useEffect(() => this._applyStoredColumnWidths());
+        // Re-apply saved widths after each render: registered after the core
+        // hook's own onMounted/onPatched callbacks, so it runs once the core
+        // widths are in place.
+        useLayoutEffect(() => this._applyStoredColumnWidths());
         // The core hook also re-applies its computed widths outside of the
         // rendering cycle when the available width changes (window resize,
         // chatter/sidebar toggle); mirror that with a later-firing observer.
@@ -793,8 +808,8 @@ export class EnhancedListRenderer extends ListRenderer {
         );
         const widthObserver = new ResizeObserver(() => debouncedApply());
         onMounted(() => {
-            if (this.tableRef.el) {
-                widthObserver.observe(this.tableRef.el.parentNode);
+            if (this.tableRef()) {
+                widthObserver.observe(this.tableRef().parentNode);
             }
         });
         onWillUnmount(() => widthObserver.disconnect());
@@ -816,7 +831,7 @@ export class EnhancedListRenderer extends ListRenderer {
             }
             this._removeResizeCapture();
             this._saveColumnWidths();
-            this.render();
+            render(this);
         };
         const types = ["pointerup", "pointerdown", "keydown"];
         this._removeResizeCapture = () => {
@@ -831,7 +846,7 @@ export class EnhancedListRenderer extends ListRenderer {
     }
 
     _saveColumnWidths() {
-        const table = this.tableRef.el;
+        const table = this.tableRef();
         const bag = this.props.o2mFilter;
         if (!table || !bag) {
             return;
@@ -851,7 +866,7 @@ export class EnhancedListRenderer extends ListRenderer {
 
     _applyStoredColumnWidths() {
         const bag = this.props.o2mFilter;
-        const table = this.tableRef.el;
+        const table = this.tableRef();
         if (!bag || !table || this.props.list.isGrouped) {
             return;
         }
@@ -888,11 +903,30 @@ export class EnhancedListRenderer extends ListRenderer {
     onO2mResetWidths() {
         this.props.o2mFilter?.clearWidths();
         this.columnWidths.resetWidths();
-        this.render();
+        render(this);
     }
 
+    /** The filter row's from/to inputs of a date column, as they stand now. */
+    _o2mDateInputs(name) {
+        const table = this.tableRef();
+        return [
+            table?.querySelector(`input.o_o2m_filter_date_start[data-col="${name}"]`) || null,
+            table?.querySelector(`input.o_o2m_filter_date_end[data-col="${name}"]`) || null,
+        ];
+    }
+
+    /**
+     * Attach a range picker to each date column's filter inputs.
+     *
+     * Odoo 20 binds the inputs once, when the picker is created: `enable()` is
+     * a deprecated no-op returning `destroy`, so a filter row rebuilt by a
+     * patch would leave the picker listening on detached inputs. Recreating it
+     * is cheap (closures plus a popover handle) and re-reads the current filter
+     * bounds, so the picker is replaced whenever its inputs went stale -- never
+     * while its calendar is open, which would close it under the user.
+     */
     _enableDatePickers() {
-        if (!this.tableRef.el) {
+        if (!this.tableRef()) {
             return;
         }
         for (const column of this.columns) {
@@ -900,26 +934,31 @@ export class EnhancedListRenderer extends ListRenderer {
                 continue;
             }
             const name = column.name;
-            if (!this.datePickers[name]) {
-                this.datePickers[name] = this.datetimePickerService.create({
-                    getInputs: () => [
-                        this.tableRef.el?.querySelector(
-                            `input.o_o2m_filter_date_start[data-col="${name}"]`
-                        ) || null,
-                        this.tableRef.el?.querySelector(
-                            `input.o_o2m_filter_date_end[data-col="${name}"]`
-                        ) || null,
-                    ],
-                    pickerProps: {
-                        type: "date",
-                        range: true,
-                        value: this._getDateFilterValue(name),
-                    },
-                    onChange: (value) => this._applyDateFilterValue(name, value),
-                    onApply: (value) => this._applyDateFilterValue(name, value),
-                });
+            const inputs = this._o2mDateInputs(name);
+            const picker = this.datePickers[name];
+            if (picker) {
+                const bound = this._o2mDatePickerInputs[name] || [];
+                if ((bound[0] === inputs[0] && bound[1] === inputs[1]) || picker.isOpen()) {
+                    continue;
+                }
+                picker.destroy();
+                delete this.datePickers[name];
+                delete this._o2mDatePickerInputs[name];
             }
-            this.datePickers[name].enable();
+            if (!inputs[0] && !inputs[1]) {
+                continue; // the filter row is not in the DOM yet
+            }
+            this.datePickers[name] = this.datetimePickerService.create({
+                getInputs: () => this._o2mDateInputs(name),
+                pickerProps: {
+                    type: "date",
+                    range: true,
+                    value: this._getDateFilterValue(name),
+                },
+                onChange: (value) => this._applyDateFilterValue(name, value),
+                onApply: (value) => this._applyDateFilterValue(name, value),
+            });
+            this._o2mDatePickerInputs[name] = inputs;
         }
     }
 
@@ -952,7 +991,7 @@ export class EnhancedListRenderer extends ListRenderer {
             const target = ev.target;
             if (
                 !target.isConnected ||
-                (this.tableRef.el && this.tableRef.el.contains(target)) ||
+                (this.tableRef() && this.tableRef().contains(target)) ||
                 target.closest?.(".o_o2m_filter_relsel_menu")
             ) {
                 return;
@@ -1187,20 +1226,25 @@ export class EnhancedListRenderer extends ListRenderer {
         }
         const records = filterActive ? bag.getFilteredRecords() : this.props.list.records;
         const realProps = this.props;
-        this.props = {
-            ...realProps,
-            list: new Proxy(realProps.list, {
-                get: (target, prop) => {
-                    if (prop === "records") {
-                        return records;
-                    }
-                    if (prop === "selection") {
-                        return selected;
-                    }
-                    return Reflect.get(target, prop);
-                },
-            }),
-        };
+        // `props` is the reactive object useProps returned, and core computes
+        // the aggregates inside its onWillRender: a plain spread copy would
+        // read through an inert object and lose the dependency tracking that
+        // keeps the footer in sync. Proxying passes every other read straight
+        // back to the reactive object.
+        const listProxy = new Proxy(realProps.list, {
+            get: (target, prop) => {
+                if (prop === "records") {
+                    return records;
+                }
+                if (prop === "selection") {
+                    return selected;
+                }
+                return Reflect.get(target, prop);
+            },
+        });
+        this.props = new Proxy(realProps, {
+            get: (target, prop) => (prop === "list" ? listProxy : Reflect.get(target, prop)),
+        });
         try {
             return super.computeAggregates();
         } finally {
@@ -1239,7 +1283,7 @@ export class EnhancedListRenderer extends ListRenderer {
                 const num = typeof raw === "number" ? raw : parseFloat(raw);
                 if (!isNaN(num) && String(num).includes(needle.replace(",", "."))) {
                     return markup(
-                        `<mark class="o_o2m_filter_match">${escape(value)}</mark>`
+                        `<mark class="o_o2m_filter_match">${htmlEscape(value)}</mark>`
                     );
                 }
             }
@@ -1250,10 +1294,10 @@ export class EnhancedListRenderer extends ListRenderer {
         while (index <= value.length) {
             const at = lower.indexOf(needleLower, index);
             if (at === -1) {
-                html += escape(value.slice(index));
+                html += htmlEscape(value.slice(index));
                 break;
             }
-            html += `${escape(value.slice(index, at))}<mark class="o_o2m_filter_match">${escape(
+            html += `${htmlEscape(value.slice(index, at))}<mark class="o_o2m_filter_match">${htmlEscape(
                 value.slice(at, at + needle.length)
             )}</mark>`;
             index = at + needle.length;
@@ -1275,7 +1319,7 @@ export class EnhancedListRenderer extends ListRenderer {
         }
         const ranges = [];
         const state = this.o2mState;
-        const table = this.tableRef.el;
+        const table = this.tableRef();
         if (table && state?.active && !state.closing) {
             for (const [name, rawNeedle] of Object.entries(state.cols)) {
                 const field = this.props.list.fields[name];
@@ -1487,7 +1531,7 @@ export class EnhancedListRenderer extends ListRenderer {
     }
 
     onO2mImportClick() {
-        this.o2mImportInputRef.el?.click();
+        this.o2mImportInputRef()?.click();
     }
 
     onO2mPaste() {
@@ -1522,7 +1566,7 @@ export class EnhancedOne2ManyField extends X2ManyField {
         this.o2mNotification = useService("notification");
         this.o2mOrm = useService("orm");
         this.o2mDialog = useService("dialog");
-        this.o2mFilterState = useState({
+        this.o2mFilterState = proxy({
             active: false,
             closing: false,
             cols: {},
@@ -2364,4 +2408,18 @@ registry.category("fields").add("one2many_enhanced", {
     ...x2ManyField,
     component: EnhancedOne2ManyField,
     displayName: _t("Relational table (enhanced)"),
+    /**
+     * Odoo 20 narrowed core's x2many `crudOptions` to the five CRUD attributes
+     * (`pick(attrs, "create", "delete", "link", "unlink", "write")`), so the
+     * field tag's own options dict no longer rides along with it and every
+     * per-view option of this widget -- default_open, disable_*,
+     * no_filter_columns, hierarchy_field, save_column_widths -- would be read
+     * as absent, silently. The dict is still on the field info, so put it back
+     * the way 19 passed it; the CRUD attributes stay last so they keep winning.
+     */
+    extractProps: (fieldInfo, dynamicInfo) => {
+        const props = x2ManyField.extractProps(fieldInfo, dynamicInfo);
+        props.crudOptions = { ...(fieldInfo.options || {}), ...props.crudOptions };
+        return props;
+    },
 });

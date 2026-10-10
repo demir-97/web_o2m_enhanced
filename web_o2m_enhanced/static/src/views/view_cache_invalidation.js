@@ -1,5 +1,5 @@
 import { rpcBus } from "@web/core/network/rpc";
-import { UPDATE_METHODS } from "@web/core/orm_service";
+import { UPDATE_METHODS } from "@web/core/orm_plugin";
 
 // get_views responses are cached on disk by the view service, and only
 // writes on ir.ui.view / ir.filters invalidate that cache. A table setup

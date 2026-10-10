@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_o2m_enhanced_config_manager,o2m.enhanced.config manager,model_o2m_enhanced_config,web_o2m_enhanced.group_o2m_enhanced_manager,1,1,1,1

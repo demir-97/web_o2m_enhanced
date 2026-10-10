@@ -26,6 +26,12 @@ class O2mEnhancedConfig(models.Model):
     _description = 'Enhanced Table Setup'
     _order = 'model_name, field_name'
 
+    # Postprocessed view archs are cached under the ormcache named "templates"
+    # (ir.ui.view._clear_cache_name): a setup change must invalidate it to be
+    # visible on the next form load. Odoo 20 does that from create/write/unlink
+    # on its own once the cache is named here -- no override needed.
+    _clear_cache_name = 'templates'
+
     active = fields.Boolean(default=True)
     model_id = fields.Many2one(
         'ir.model', string='Model', required=True, ondelete='cascade',
@@ -209,22 +215,3 @@ class O2mEnhancedConfig(models.Model):
         if self.no_filter_column_ids:
             options['no_filter_columns'] = self.no_filter_column_ids.mapped('name')
         return options
-
-    # Postprocessed view archs are cached (ormcache "templates"): any setup
-    # change must invalidate them to be visible on the next form load.
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        configs = super().create(vals_list)
-        self.env.registry.clear_cache('templates')
-        return configs
-
-    def write(self, vals):
-        result = super().write(vals)
-        self.env.registry.clear_cache('templates')
-        return result
-
-    def unlink(self):
-        result = super().unlink()
-        self.env.registry.clear_cache('templates')
-        return result

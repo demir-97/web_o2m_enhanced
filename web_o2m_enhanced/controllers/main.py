@@ -4,7 +4,9 @@ import io
 import json
 
 from odoo import http
-from odoo.http import content_disposition, request
+from odoo.http import request
+# Odoo 20 moved content_disposition out of odoo.http into odoo.http.stream.
+from odoo.http.stream import content_disposition
 
 XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 

@@ -1,6 +1,6 @@
 {
     'name': "Ultimate One2many & Many2many Toolbox",
-    'version': '19.0.1.17.19',
+    'version': '20.0.1.17.19',
     'category': 'Productivity',
     'author': 'Meisanqo',
     'support': 'meisanqo@outlook.com',
@@ -134,7 +134,7 @@ a list.
     'images': ['static/description/banner.png'],
     'data': [
         'security/o2m_enhanced_security.xml',
-        'security/ir.model.access.csv',
+        'security/ir.access.csv',
         'views/o2m_enhanced_config_views.xml',
     ],
     'assets': {
