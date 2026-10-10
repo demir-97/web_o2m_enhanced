@@ -32,10 +32,14 @@
                     <div class="alert alert-warning" role="alert" invisible="not custom_widget_warning">
                         <field name="custom_widget_warning" nolabel="1" readonly="1"/>
                     </div>
+                    <div class="alert alert-info" role="alert" invisible="not shared_records_warning">
+                        <field name="shared_records_warning" nolabel="1" readonly="1"/>
+                    </div>
                     <group>
                         <group string="Table">
                             <field name="active" invisible="1"/>
                             <field name="line_model" invisible="1"/>
+                            <field name="field_ttype" invisible="1"/>
                             <field name="model_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="field_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="force_widget" invisible="not custom_widget_warning and not force_widget"/>
